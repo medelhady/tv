@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - Anti-Block TV Hub</title>
+    <title>Smart Rem - Video Engine Test</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -111,21 +111,16 @@
             color: #fff;
         }
 
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
         .card-meta {
             font-size: 0.8rem;
             color: #00ff66;
             background: rgba(0, 255, 102, 0.1);
             padding: 2px 8px;
             border-radius: 6px;
+            align-self: flex-start;
         }
 
-        /* 📺 تعديل طبقة المشغل لضمان الأولوية القصوى لكرت الشاشة */
+        /* 📺 طبقة المشغل الذكي الجديد القائم على اليوتيوب */
         #video-player-container {
             display: none;
             position: fixed;
@@ -137,10 +132,9 @@
             z-index: 99999;
         }
 
-        video {
+        #player-wrapper {
             width: 100%;
             height: 100%;
-            object-fit: contain;
             background-color: #000;
         }
 
@@ -166,25 +160,23 @@
         <div class="time" id="clock">00:00</div>
     </header>
 
-    <div class="row-title">البث المباشر وقنوات التجربة</div>
+    <div class="row-title">قنوات الفحص واختبار تشغيل الصوت والصورة</div>
     <div class="horizontal-grid">
-        <div class="card" tabindex="1" data-stream="https://html5demos.com/assets/dizzy.mp4">
-            <div class="card-title">قناة البث التجريبية 1</div>
-            <div class="card-footer">
-                <div class="card-meta">اضغط للتجربة</div>
-            </div>
+        <div class="card" tabindex="1" data-youtube="NpEaa2P7qZI">
+            <div class="card-title">قناة فحص الطبيعة (4K)</div>
+            <div style="height: 10px;"></div>
+            <div class="card-meta">اضغط للاختبار</div>
         </div>
-        <div class="card" tabindex="2" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
-            <div class="card-title">قناة البث التجريبية 2</div>
-            <div class="card-footer">
-                <div class="card-meta">عرض سينمائي</div>
-            </div>
+        <div class="card" tabindex="2" data-youtube="Ir3Vb_709pM">
+            <div class="card-title">إعلان فيلم أكشن تجريبي</div>
+            <div style="height: 10px;"></div>
+            <div class="card-meta">عرض صوت وصورة</div>
         </div>
     </div>
 
     <div id="video-player-container">
-        <div class="player-hint">اضغط زر الرجوع (Back) بالريموت للعودة</div>
-        <video id="tv-video-player" controls autoplay playsinline preload="auto"></video>
+        <div class="player-hint">اضغط زر الرجوع (Back) بالريموت للعودة للقائمة</div>
+        <div id="player-wrapper"></div>
     </div>
 
     <script>
@@ -203,52 +195,40 @@
         if(firstCard) firstCard.focus();
 
         const playerContainer = document.getElementById('video-player-container');
-        const videoPlayer = document.getElementById('tv-video-player');
+        const playerWrapper = document.getElementById('player-wrapper');
 
-        // دالة تشغيل الفيديو الذكية لكسر حظر الشاشات الصينية
-        function playStream(url) {
+        // دالة تشغيل اليوتيوب الإجبارية لتخطي حظر الشاشات
+        function playYoutubeStream(videoId) {
             playerContainer.style.display = 'block';
             
-            videoPlayer.src = url;
-            videoPlayer.load(); // إجبار المعالج على قراءة الملف فوراً
-            
-            // 🛠️ خدعة كسر الحظر: تشغيل صامت مؤقتاً لتخطي حظر المتصفح
-            videoPlayer.muted = true; 
-            
-            let playPromise = videoPlayer.play();
-            
-            if (playPromise !== undefined) {
-                playPromise.then(_ => {
-                    // بمجرد أن يبدأ الفيديو في العمل فعلياً، نرفع الصوت تلقائياً بعد نصف ثانية
-                    setTimeout(() => {
-                        videoPlayer.muted = false;
-                    }, 400);
-                }).catch(error => {
-                    // إذا اعترض المتصفح، نقوم بمحاولة تشغيل ثانية إجبارية
-                    console.log("TV Playback intercept caught, retrying...");
-                    videoPlayer.play();
-                });
-            }
+            // نستخدم تضمين يوتيوب مخصص للتلفزيونات (يتضمن تشغيل تلقائي وصوت حقيقي)
+            playerWrapper.innerHTML = `
+                <iframe 
+                    id="tv-iframe" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&rel=0&showinfo=0&iv_load_policy=3" 
+                    style="width:100%; height:100%; border:none;" 
+                    allow="autoplay; encrypted-media" 
+                    allowfullscreen>
+                </iframe>`;
         }
 
         function closePlayer() {
-            videoPlayer.pause();
-            videoPlayer.src = '';
+            playerWrapper.innerHTML = ''; // تدمير المشغل لوقف الصوت فوراً
             playerContainer.style.display = 'none';
             document.querySelector('.card').focus();
         }
 
-        // الاستماع للريموت
+        // الاستماع للريموت والضغط
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
-                const streamUrl = this.getAttribute('data-stream');
-                if(streamUrl) playStream(streamUrl);
+                const videoId = this.getAttribute('data-youtube');
+                if(videoId) playYoutubeStream(videoId);
             });
 
             card.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
-                    const streamUrl = this.getAttribute('data-stream');
-                    if(streamUrl) playStream(streamUrl);
+                    const videoId = this.getAttribute('data-youtube');
+                    if(videoId) playYoutubeStream(videoId);
                 }
             });
         });
