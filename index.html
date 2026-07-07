@@ -2,27 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Smart Rem TV - Activator</title>
+    <title>Smart Rem TV - Direct Activation</title>
     <style>
-        body { background: #070908; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
-        .box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 2px solid #00ff66; text-align: center; width: 80%; }
-        input { width: 80%; padding: 20px; font-size: 2rem; border-radius: 10px; text-align: center; margin: 20px 0; }
-        .btn { background: #00ff66; color: #000; padding: 20px 40px; border-radius: 10px; font-weight: bold; cursor: pointer; border: none; font-size: 1.5rem; }
+        body { margin: 0; padding: 0; background: #000; height: 100vh; overflow: hidden; }
+        iframe { width: 100vw; height: 100vh; border: none; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h1>Enter Activation Code</h1>
-        <p>Get the 6-digit code from your TOD App/Phone and enter it here:</p>
-        <input type="text" id="code" maxlength="6" placeholder="XXXXXX">
-        <button class="btn" onclick="activate()">Activate Now</button>
-    </div>
-    <script>
-        function activate() {
-            const code = document.getElementById('code').value;
-            // هذا الرابط هو الرابط الخلفي لتفعيل الأجهزة، قد ينجح المتصفح في معالجته كطلب API
-            window.location.href = "https://www.tod.tv/en/activate?code=" + code;
-        }
-    </script>
+    <iframe src="https://www.tod.tv/en/activate" sandbox="allow-scripts allow-forms allow-same-origin"></iframe>
 </body>
 </html>
