@@ -3,144 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - TV Hub</title>
+    <title>Smart Rem - Premium TV Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background-color: #111;
+            background: radial-gradient(circle at center, #1a1f1c 0%, #0d0f0e 100%);
             color: #fff;
-            width: 100vw; /* يأخذ كامل عرض المتصفح المتاح تلقائياً */
-            height: 100vh; /* يأخذ كامل الارتفاع المتاح تلقائياً */
-            overflow: hidden; 
-            padding: 3vw; /* مسافات أمان مرنة لحواف الشاشة */
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            padding: 3.5vw;
             display: flex;
             flex-direction: column;
         }
 
+        /* الهيدر الاحترافي */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            height: 10%;
-            margin-bottom: 2vh;
+            height: 12%;
+            margin-bottom: 3vh;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 15px;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
+            font-size: 2rem;
+            font-weight: 900;
             color: #00ff66;
+            text-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .time {
-            font-size: 1.3rem;
-            color: #aaa;
-        }
-
-        .row-title {
             font-size: 1.4rem;
-            margin-bottom: 1vh;
-            color: #eee;
+            color: #888;
             font-weight: 600;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 5px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
+        /* عناوين الصفوف */
+        .row-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5vh;
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 18px;
+            background: #00ff66;
+            border-radius: 2px;
+        }
+
+        /* شبكة الكروت المرنة والأفقية */
         .horizontal-grid {
             display: flex;
-            gap: 1.5vw;
+            gap: 2vw;
             overflow-x: auto;
-            height: 35%; /* توزيع متساوي للأقسام */
+            height: 33%;
             align-items: center;
+            padding: 10px 5px;
         }
 
         .horizontal-grid::-webkit-scrollbar {
             display: none;
         }
 
+        /* تصميم الكارت السينمائي الجديد */
         .card {
-            flex: 0 0 22%; /* يجعل الكروت تتناسق عرضياً حسب حجم الشاشة */
-            height: 85%;
-            background: #222;
-            border-radius: 8px;
-            border: 2px solid transparent;
+            flex: 0 0 21%;
+            height: 95%;
+            background: linear-gradient(135deg, rgba(40,40,40,0.7) 0%, rgba(20,20,20,0.8) 100%);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 15px;
+            justify-content: space-between;
+            padding: 20px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            position: relative;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s, box-shadow 0.25s;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
+        /* تأثير النيون والفخامة عند حركة الريموت (Focus) */
         .card:focus, .card.active {
             border-color: #00ff66;
-            transform: scale(1.03);
-            background: #2a2a2a;
+            transform: scale(1.06);
+            background: linear-gradient(135deg, #223c2b 0%, #111e15 100%);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4), 0 10px 30px rgba(0,0,0,0.6);
             outline: none;
         }
 
+        /* أيقونة اللعب الوهمية في وسط الكارت عند التركيز */
+        .card::after {
+            content: '▶';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 1.8rem;
+            color: #00ff66;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+        .card:focus::after {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         .card-title {
-            font-size: 1.1rem;
-            font-weight: bold;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            z-index: 2;
+        }
+
+        /* تفاصيل الكارت السفلي */
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
         }
 
         .card-meta {
             font-size: 0.8rem;
             color: #00ff66;
-            margin-top: 5px;
+            font-weight: 600;
+            background: rgba(0, 255, 102, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        /* شعار البث المباشر المتحرك */
+        .badge-live {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: #ff3333;
+            font-weight: 700;
+            background: rgba(255, 51, 51, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            background-color: #ff3333;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.6; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">Smart Rem TV 📺</div>
+        <div class="logo">🎛️ SMART REM TV</div>
         <div class="time" id="clock">00:00</div>
     </header>
 
-    <div class="row-title">البث المباشر (Live TV)</div>
+    <div class="row-title">البث المباشر الحصري</div>
     <div class="horizontal-grid">
         <div class="card" tabindex="1">
-            <div class="card-title">قناة beIN SPORTS 1</div>
-            <div class="card-meta">جودة HD | DRM OK</div>
+            <div class="card-title">beIN SPORTS 1 HD</div>
+            <div class="card-footer">
+                <div class="badge-live"><span class="dot"></span>مباشر</div>
+                <div class="card-meta">4K Ultra</div>
+            </div>
         </div>
         <div class="card" tabindex="2">
-            <div class="card-title">قناة SSC 1</div>
-            <div class="card-meta">مباشر الآن</div>
+            <div class="card-title">SSC SPORTS 1</div>
+            <div class="card-footer">
+                <div class="badge-live"><span class="dot"></span>مباشر</div>
+                <div class="card-meta">HD</div>
+            </div>
         </div>
         <div class="card" tabindex="3">
-            <div class="card-title">قناة شاهد الأولى</div>
-            <div class="card-meta">منوعات</div>
+            <div class="card-title">SHAHID الأولى</div>
+            <div class="card-footer">
+                <div class="badge-live"><span class="dot"></span>مباشر</div>
+                <div class="card-meta">Premium</div>
+            </div>
         </div>
         <div class="card" tabindex="4">
-            <div class="card-title">قناة أبوظبي الرياضية</div>
-            <div class="card-meta">بث مباشر</div>
+            <div class="card-title">AD SPORTS HD</div>
+            <div class="card-footer">
+                <div class="badge-live"><span class="dot"></span>مباشر</div>
+                <div class="card-meta">مجاني</div>
+            </div>
         </div>
     </div>
 
-    <div class="row-title">المضاف حديثاً (TOD & Shahid)</div>
+    <div class="row-title">مكتبة الأفلام والمسلسلات (TOD)</div>
     <div class="horizontal-grid">
         <div class="card" tabindex="5">
-            <div class="card-title">فيلم الإثارة والأكشن</div>
-            <div class="card-meta">شاهد حصرياً</div>
+            <div class="card-title">فيلم الأكشن والإثارة</div>
+            <div class="card-footer">
+                <div style="font-size: 0.8rem; color: #aaa;">ساعتان | 2026</div>
+                <div class="card-meta" style="color: #ffaa00; background: rgba(255,170,0,0.1);">★ 8.9</div>
+            </div>
         </div>
         <div class="card" tabindex="6">
-            <div class="card-title">مسلسل دراما رمضان</div>
-            <div class="card-meta">الحلقة 5</div>
+            <div class="card-title">مسلسل الدراما الحصري</div>
+            <div class="card-footer">
+                <div style="font-size: 0.8rem; color: #aaa;">الحلقة 5</div>
+                <div class="card-meta">جديد</div>
+            </div>
         </div>
         <div class="card" tabindex="7">
-            <div class="card-title">وثائقي المباريات</div>
-            <div class="card-meta">إنتاج TOD</div>
+            <div class="card-title">الوثائقي الرياضي</div>
+            <div class="card-footer">
+                <div style="font-size: 0.8rem; color: #aaa;">إنتاج خاص</div>
+                <div class="card-meta">TOD</div>
+            </div>
         </div>
     </div>
 
     <script>
+        // كود تشغيل الساعة الذكية لقراءة التوقيت المحلي بدقة
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = 
@@ -150,7 +263,7 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // فوكس تلقائي
+        // تفعيل الفوكس التلقائي على أول كارت للتحكم بالريموت فوراً
         document.querySelector('.card').focus();
     </script>
 </body>
