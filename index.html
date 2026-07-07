@@ -2,152 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>مشغل التلفاز الذكي</title>
+  <title>TV Browser Test</title>
   <style>
     body {
-      margin: 0;
-      background: #101418;
-      color: #f4f7fb;
-      font-family: Arial, Tahoma, sans-serif;
-      font-size: 22px;
-      line-height: 1.45;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 28px;
+      padding: 30px;
     }
-    .screen {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 44px 42px;
-    }
-    h1 {
-      margin: 0 0 18px;
-      font-size: 42px;
-      color: #fff;
-    }
-    .lead {
-      color: #cbd5df;
-      margin-bottom: 30px;
-    }
-    .panel {
-      border: 1px solid #2a3440;
-      background: #171d24;
-      padding: 28px;
-      margin-bottom: 22px;
-    }
-    .button {
+    a, button {
       display: block;
       width: 100%;
       box-sizing: border-box;
-      margin-bottom: 16px;
-      padding: 20px 22px;
-      border: 2px solid #4a8cff;
-      background: #1e5fd6;
+      margin: 20px 0;
+      padding: 25px;
+      font-size: 30px;
+      background: #1565c0;
       color: white;
+      border: 0;
       text-align: center;
       text-decoration: none;
-      font-size: 28px;
-      font-weight: bold;
     }
-    .button:focus,
-    .button:hover {
-      outline: 4px solid #fff;
-      background: #2b71ec;
-    }
-    .button.secondary {
-      border-color: #607080;
-      background: #26313c;
-    }
-    .status {
+    .box {
+      background: #222;
+      padding: 20px;
       margin-top: 20px;
-      padding: 18px;
-      background: #0d1116;
-      border-right: 5px solid #4a8cff;
-      color: #d9e2ec;
-      font-size: 20px;
-    }
-    .small {
-      color: #aab7c4;
-      font-size: 18px;
-    }
-    li {
-      margin: 8px 0;
+      white-space: pre-wrap;
+      direction: ltr;
+      text-align: left;
     }
   </style>
 </head>
 <body>
-  <main class="screen">
-    <section class="panel">
-      <h1>مشغل التلفاز الذكي</h1>
-      <p class="lead">
-        صفحة بسيطة للشاشات الذكية الضعيفة. تستخدم روابط رسمية فقط بدون iframe.
-      </p>
+  <h1>TV Browser Test</h1>
 
-      <a id="openTod" class="button" href="https://www.tod.tv/" target="_self">
-        فتح TOD بالطريقة الرسمية
-      </a>
+  <a href="https://www.tod.tv/">Open TOD</a>
+  <a href="https://connect.bein.com/">Open beIN CONNECT</a>
 
-      <a id="openBein" class="button secondary" href="https://connect.bein.com/" target="_self">
-        فتح beIN CONNECT بالطريقة الرسمية
-      </a>
+  <button onclick="runTest()">Test Browser Support</button>
 
-      <div id="status" class="status">
-        استخدم أزرار الريموت ثم OK. إذا توقفت صفحة الدخول فالمشكلة من توافق متصفح التلفاز مع الخدمة.
-      </div>
-    </section>
-
-    <section class="panel">
-      <h1>بدائل عملية</h1>
-      <ul>
-        <li>استخدم تطبيق الخدمة الرسمي إن كان متاحا.</li>
-        <li>استخدم Android TV Box أو Apple TV أو Chromecast يدعم DRM.</li>
-        <li>استخدم HDMI من لابتوب أو جهاز بث رسمي.</li>
-      </ul>
-      <p class="small">
-        ملاحظة: خدمات البث المحمية تحتاج متصفح أو جهاز يدعم DRM بشكل رسمي.
-      </p>
-    </section>
-  </main>
+  <div id="result" class="box">Press test button</div>
 
   <script>
-    (function () {
-      var links = [
-        document.getElementById('openTod'),
-        document.getElementById('openBein')
-      ];
-      var focused = 0;
+    function runTest() {
+      var out = '';
 
-      function setFocus(index) {
-        if (index < 0) index = links.length - 1;
-        if (index >= links.length) index = 0;
-        focused = index;
-        try {
-          links[focused].focus();
-        } catch (e) {}
+      out += 'User Agent:\n' + navigator.userAgent + '\n\n';
+      out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
+
+      out += 'Local Storage: ';
+      try {
+        localStorage.setItem('x', '1');
+        localStorage.removeItem('x');
+        out += 'YES\n';
+      } catch (e) {
+        out += 'NO\n';
       }
 
-      document.onkeydown = function (event) {
-        event = event || window.event;
-        var code = event.keyCode || event.which;
+      out += 'Promise: ' + (window.Promise ? 'YES' : 'NO') + '\n';
+      out += 'Fetch: ' + (window.fetch ? 'YES' : 'NO') + '\n';
+      out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
+      out += 'EME DRM: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
 
-        if (code === 38 || code === 37) {
-          setFocus(focused - 1);
-          return false;
-        }
-
-        if (code === 40 || code === 39) {
-          setFocus(focused + 1);
-          return false;
-        }
-
-        if (code === 13) {
-          window.location.href = links[focused].getAttribute('href');
-          return false;
-        }
-
-        return true;
-      };
-
-      setFocus(0);
-    }());
+      document.getElementById('result').innerHTML = out;
+    }
   </script>
 </body>
 </html>
