@@ -3,65 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem TV - Direct Access</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>Smart Rem TV - Direct Activation</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background: radial-gradient(circle at center, #111613 0%, #070908 100%); color: #fff; width: 100vw; height: 100vh; padding: 3vw; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        .login-container { background: rgba(20, 25, 22, 0.9); border: 2px solid #00ff66; border-radius: 20px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.2); text-align: center; }
-        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,102,0.3); }
-        h3 { margin-bottom: 25px; color: #a0a5a2; font-size: 1.1rem; font-weight: 400; }
-        
-        .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; color: #00ff66; font-weight: 600; }
-        .input-group input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 1.2rem; text-align: left; }
-        .input-group input:focus { border-color: #00ff66; background: rgba(0,255,102,0.05); outline: none; }
-        
-        /* أزرار مقسمة لعدم تعليق المتصفح */
-        .btn-action { width: 100%; padding: 15px; color: #fff; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: block; text-decoration: none; text-align: center; }
-        .btn-blue { background: #007bff; }
-        .btn-blue:focus { background: #0056b3; box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); outline: none; }
-        .btn-orange { background: #ff6600; }
-        .btn-orange:focus { background: #e05500; box-shadow: 0 0 20px rgba(255, 102, 0, 0.5); outline: none; }
-        
-        .steps { margin-top: 25px; text-align: left; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        .steps p { font-size: 0.85rem; color: #a0a5a2; margin-bottom: 5px; }
+        body { background: #070908; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; }
+        .box { background: #1a1a1a; padding: 30px; border-radius: 20px; border: 2px solid #00ff66; text-align: center; }
+        h1 { color: #00ff66; }
+        p { margin: 20px 0; font-size: 1.2rem; }
+        .btn { display: block; background: #ff6600; color: #fff; padding: 20px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 1.5rem; }
     </style>
 </head>
 <body>
-
-    <div class="login-container">
-        <div class="logo">SMART REM TV</div>
-        <h3>TOD TV - Chinese Screen Native Fix</h3>
-        
-        <div class="input-group">
-            <label>Enter Your TOD Email:</label>
-            <input type="email" id="tod-email" tabindex="1" placeholder="your-email@example.com" value="medelhady@gmail.com">
-        </div>
-        
-        <button class="btn-action btn-blue" id="focus-btn" tabindex="2" onclick="highlightText()">1. Highlight Email</button>
-        
-        <a href="https://www.tod.tv/en/login" class="btn-action btn-orange" id="launch-btn" tabindex="3">2. Open TOD Login</a>
-        
-        <div class="steps">
-            <p style="color: #00ff66; font-weight: bold; margin-bottom: 8px;">New Safe TV Method:</p>
-            <p>1. Click <b>"1. Highlight Email"</b> -> (Email gets selected).</p>
-            <p>2. Use your TV remote copy option if available, OR just keep it highlighted.</p>
-            <p>3. Click <b>"2. Open TOD Login"</b> -> (Will open instantly without freeze).</p>
-        </div>
+    <div class="box">
+        <h1>Smart Rem TV</h1>
+        <p>Instead of logging in, use the TV Activation link:</p>
+        <a href="https://www.tod.tv/en/activate" class="btn">Open Activation Page</a>
     </div>
-
-    <script>
-        setTimeout(() => { document.getElementById('tod-email').focus(); }, 300);
-
-        // وظيفة التظليل فقط دون استدعاء دوال الحافظة المعقدة للمتصفحات القديمة
-        function highlightText() {
-            const emailInput = document.getElementById('tod-email');
-            emailInput.focus();
-            emailInput.select();
-            emailInput.setSelectionRange(0, 99999);
-        }
-    </script>
 </body>
 </html>
