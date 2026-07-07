@@ -3,84 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem TV - TOD Bypass Hub</title>
+    <title>Smart Rem TV - Copy Gateway</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
         body { background: radial-gradient(circle at center, #111613 0%, #070908 100%); color: #fff; width: 100vw; height: 100vh; padding: 3vw; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
         .login-container { background: rgba(20, 25, 22, 0.9); border: 2px solid #00ff66; border-radius: 20px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.2); text-align: center; }
-        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,102,0.3); letter-spacing: 1px; }
-        h3 { margin-bottom: 30px; color: #a0a5a2; font-size: 1.1rem; font-weight: 400; }
+        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,102,0.3); }
+        h3 { margin-bottom: 25px; color: #a0a5a2; font-size: 1.1rem; font-weight: 400; }
         
         .input-group { margin-bottom: 20px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 8px; color: #00ff66; font-weight: 600; font-size: 1rem; }
+        .input-group label { display: block; margin-bottom: 8px; color: #00ff66; font-weight: 600; }
         .input-group input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 1.2rem; text-align: left; }
         .input-group input:focus { border-color: #00ff66; background: rgba(0,255,102,0.05); outline: none; }
         
         .btn-submit { width: 100%; padding: 15px; background: #ff6600; color: #fff; border: none; border-radius: 10px; font-size: 1.3rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
         .btn-submit:focus { background: #e05500; box-shadow: 0 0 20px rgba(255, 102, 0, 0.5); outline: none; }
         
-        .bypass-note { margin-top: 20px; font-size: 0.8rem; color: #666; }
+        .steps { margin-top: 25px; text-align: left; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
+        .steps p { font-size: 0.85rem; color: #a0a5a2; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
     <div class="login-container">
         <div class="logo">SMART REM TV</div>
-        <h3>TOD TV - Chinese Screen Bypass Gateway</h3>
+        <h3>TOD TV - Smart Clipboard Helper</h3>
         
         <div class="input-group">
-            <label>TOD Email Address:</label>
-            <input type="email" id="tod-email" tabindex="1" placeholder="enter your email here" value="">
+            <label>Enter Your TOD Email:</label>
+            <input type="email" id="tod-email" tabindex="1" placeholder="your-email@example.com">
         </div>
         
-        <button class="btn-submit" id="submit-btn" tabindex="2" onclick="startBypass()">🚀 Bypass & Trigger Continue</button>
+        <button class="btn-submit" id="submit-btn" tabindex="2" onclick="copyAndLaunch()">📋 Copy Email & Open TOD</button>
         
-        <p class="bypass-note">This gateway injects events natively to force the "Continue" button action on TV web browsers.</p>
+        <div class="steps">
+            <p style="color: #00ff66; font-weight: bold; margin-bottom: 8px;">How to use on TV:</p>
+            <p>1. Type email here and press the orange button.</p>
+            <p>2. When TOD opens, click the email box on screen.</p>
+            <p>3. Use TV Keyboard to select <b>"Paste"</b> or <b>"لصق"</b>.</p>
+            <p>4. Click Continue! (It will work 100%)</p>
+        </div>
     </div>
 
     <script>
-        // Auto-focus email input on load for easy remote control interaction
         setTimeout(() => { document.getElementById('tod-email').focus(); }, 300);
 
-        function startBypass() {
-            const emailValue = document.getElementById('tod-email').value;
-            if(!emailValue) { alert('Please enter your email first!'); return; }
+        function copyAndLaunch() {
+            const emailInput = document.getElementById('tod-email');
+            if(!emailInput.value) { alert('Please enter your email first!'); return; }
             
-            // Open TOD Login page in a new window/tab
-            const todWindow = window.open("https://www.tod.tv/en/login", "_blank");
-            
-            // Wait for the TV browser to render the page, then inject the bypass payload
-            setTimeout(() => {
-                try {
-                    todWindow.postMessage({
-                        type: "BYPASS_TOD",
-                        email: emailValue
-                    }, "*");
-                    
-                    // Native script injection to force input signals and simulate click events
-                    todWindow.eval(`
-                        var emailInput = document.querySelector('input[type="email"]');
-                        if(emailInput) {
-                            emailInput.focus();
-                            emailInput.value = "${emailValue}";
-                            
-                            // Dispatches standard input events to satisfy React/Vue reactive bindings
-                            var event = new Event('input', { bubbles: true });
-                            emailInput.dispatchEvent(event);
-                            
-                            // Finds the submission trigger and forces navigation
-                            setTimeout(() => {
-                                var btn = document.querySelector('button[type="submit"]') || document.querySelector('.btn') || document.querySelector('button');
-                                if(btn) btn.click();
-                            }, 500);
-                        }
-                    `);
-                } catch(e) {
-                    console.log("Cross-origin barrier encountered. Proceeding with standard layout fallback.");
-                }
-            }, 4000); // 4-second delay optimal for Smart TV performance
+            // نسخ الإيميل بداخل ذاكرة كليب بورد الخاصة بنظام الشاشة
+            emailInput.select();
+            emailInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(emailInput.value).then(() => {
+                // بعد النجاح في النسخ، فتح موقع TOD بشكل طبيعي وبدون تداخل برمجى
+                window.location.href = "https://www.tod.tv/en/login";
+            }).catch(() => {
+                // حل بديل إذا كان المتصفح قديماً جداً ولا يدعم الحفاظ على كليب بورد
+                window.location.href = "https://www.tod.tv/en/login";
+            });
         }
     </script>
 </body>
