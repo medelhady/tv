@@ -2,75 +2,112 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>TOD TV Debug Launcher</title>
+  <title>TOD Chinese TV Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       margin: 0;
-      background: #101418;
-      color: white;
+      background: #080d12;
+      color: #fff;
       font-family: Arial, sans-serif;
       font-size: 28px;
       padding: 26px;
     }
-    h1 { font-size: 40px; }
+    h1 {
+      margin: 0 0 18px;
+      font-size: 42px;
+    }
+    .note {
+      background: #1c2733;
+      padding: 20px;
+      margin: 0 0 18px;
+      line-height: 1.45;
+    }
     button {
       display: block;
       width: 100%;
-      margin: 16px 0;
+      box-sizing: border-box;
+      margin: 14px 0;
       padding: 24px;
+      background: #0898e8;
+      color: #fff;
+      border: 2px solid #fff;
       font-size: 30px;
-      background: #08a8f8;
-      color: white;
-      border: 2px solid white;
+      font-weight: bold;
     }
     button:focus {
-      outline: 7px solid #ffcc00;
+      outline: 7px solid #ffd000;
+      background: #13b2ff;
     }
-    .dark { background: #26313c; }
+    .alt {
+      background: #2c3948;
+    }
+    .danger {
+      background: #6b2630;
+    }
     .box {
-      background: #202833;
-      padding: 20px;
-      margin-top: 20px;
+      margin-top: 18px;
+      padding: 18px;
+      background: #17202b;
       white-space: pre-wrap;
       direction: ltr;
       text-align: left;
       font-size: 22px;
+      line-height: 1.35;
     }
   </style>
 </head>
 <body>
-  <h1>TOD Debug Launcher</h1>
+  <h1>TOD Chinese TV Hub</h1>
 
-  <button onclick="openClean('https://www.tod.tv/')">1 - Open TOD Clean</button>
-  <button onclick="openClean('https://www.tod.tv/ar')">2 - Open TOD Arabic Clean</button>
-  <button onclick="openClean('https://www.tod.tv/en')">3 - Open TOD English Clean</button>
-  <button onclick="openPlain('https://www.tod.tv/ar')">4 - Open Without Cache Buster</button>
-  <button class="dark" onclick="showInfo()">5 - Browser Info</button>
+  <div class="note">
+    استخدم الريموت. جرّب الأزرار بالترتيب. إذا بقي TOD يلف، فالمشكلة من توافق TVBRO مع صفحة TOD وليس من صفحة Vercel.
+  </div>
+
+  <button onclick="openUrl('https://www.tod.tv/')">1 - TOD Home</button>
+  <button onclick="openUrl('https://www.tod.tv/ar')">2 - TOD Arabic</button>
+  <button onclick="openUrl('https://www.tod.tv/en')">3 - TOD English</button>
+  <button onclick="openUrl('https://www.tod.tv/ar?forceWeb=true')">4 - TOD Arabic Force Web</button>
+  <button onclick="openUrl('https://www.tod.tv/en?forceWeb=true')">5 - TOD English Force Web</button>
+  <button onclick="replaceUrl('https://www.tod.tv/ar')">6 - Replace Mode</button>
+  <button onclick="delayedOpen('https://www.tod.tv/ar')">7 - Delayed Mode</button>
+  <button class="alt" onclick="runDiagnostics()">8 - Diagnostics</button>
+  <button class="danger" onclick="clearLocalData()">9 - Clear Local Page Data</button>
 
   <div id="log" class="box">Ready</div>
 
   <script>
     var log = document.getElementById('log');
 
-    function openClean(url) {
-      var finalUrl = url;
-      var sep = finalUrl.indexOf('?') === -1 ? '?' : '&';
-      finalUrl = finalUrl + sep + 'tv=' + new Date().getTime();
-
-      log.innerHTML = 'Opening clean URL:\n' + finalUrl + '\n\nIf it keeps spinning, clear TV browser cookies/cache.';
-      setTimeout(function () {
-        window.location.href = finalUrl;
-      }, 600);
+    function write(text) {
+      log.innerHTML = text;
     }
 
-    function openPlain(url) {
-      log.innerHTML = 'Opening:\n' + url;
+    function openUrl(url) {
+      var finalUrl = url + (url.indexOf('?') === -1 ? '?' : '&') + 'from=tvhub&t=' + new Date().getTime();
+      write('Opening:\n' + finalUrl);
+      window.location.href = finalUrl;
+    }
+
+    function replaceUrl(url) {
+      write('Opening with replace:\n' + url);
+      window.location.replace(url);
+    }
+
+    function delayedOpen(url) {
+      write('Waiting 2 seconds, then opening:\n' + url);
       setTimeout(function () {
         window.location.href = url;
-      }, 600);
+      }, 2000);
     }
 
-    function showInfo() {
+    function clearLocalData() {
+      try { localStorage.clear(); } catch (e) {}
+      try { sessionStorage.clear(); } catch (e) {}
+      write('Local page data cleared.\nNow clear TVBRO browser cache/cookies from browser settings, then try again.');
+    }
+
+    function runDiagnostics() {
       var out = '';
       out += 'User Agent:\n' + navigator.userAgent + '\n\n';
       out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
@@ -79,12 +116,27 @@
         localStorage.setItem('x', '1');
         localStorage.removeItem('x');
         out += 'YES\n';
-      } catch(e) {
+      } catch (e) {
         out += 'NO\n';
       }
+      out += 'Promise: ' + (window.Promise ? 'YES' : 'NO') + '\n';
+      out += 'Fetch: ' + (window.fetch ? 'YES' : 'NO') + '\n';
       out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
       out += 'EME: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
-      log.innerHTML = out;
+
+      if (navigator.requestMediaKeySystemAccess) {
+        navigator.requestMediaKeySystemAccess('com.widevine.alpha', [{
+          initDataTypes: ['cenc'],
+          audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }],
+          videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }]
+        }]).then(function (access) {
+          write(out + 'Widevine: YES\nKeySystem: ' + access.keySystem);
+        }).catch(function (err) {
+          write(out + 'Widevine: NO\nError: ' + err.name);
+        });
+      } else {
+        write(out + 'Widevine: NO EME API');
+      }
     }
 
     document.onkeydown = function(event) {
@@ -121,8 +173,9 @@
     };
 
     window.onload = function() {
-      document.querySelector('button').focus();
-      showInfo();
+      var first = document.querySelector('button');
+      if (first) first.focus();
+      runDiagnostics();
     };
   </script>
 </body>
