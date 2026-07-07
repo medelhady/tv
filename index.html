@@ -17,7 +17,25 @@
         .row-title::before { content: ''; display: inline-block; width: 6px; height: 24px; background: #00ff66; border-radius: 3px; }
         .horizontal-grid { display: flex; gap: 2vw; overflow-x: auto; padding: 10px 5px; scroll-behavior: smooth; }
         .horizontal-grid::-webkit-scrollbar { display: none; }
-        .card { flex: 0 0 22%; height: 180px; background: linear-gradient(135deg, rgba(30,35,32,0.7) 0%, rgba(15,18,16,0.9) 100%); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); display: flex; flex-direction: column; justify-content: space-between; padding: 22px; cursor: pointer; box-shadow: 0 10px 25px rgba(0,0,0,0.4); transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s; }
+        
+        /* تحويل الكارت إلى رابط حقيقي وتثبيت التصميم */
+        .card { 
+            flex: 0 0 22%; 
+            height: 180px; 
+            background: linear-gradient(135deg, rgba(30,35,32,0.7) 0%, rgba(15,18,16,0.9) 100%); 
+            border-radius: 16px; 
+            border: 1px solid rgba(255, 255, 255, 0.06); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            padding: 22px; 
+            cursor: pointer; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4); 
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s;
+            text-decoration: none; /* إزالة الخط السفلي للرابط */
+            color: #fff;
+        }
+        
         .card:focus { border-color: #00ff66; transform: scale(1.06); background: linear-gradient(135deg, #162e1f 0%, #09130d 100%); box-shadow: 0 0 30px rgba(0, 255, 102, 0.25); outline: none; }
         .card-title { font-size: 1.2rem; font-weight: 700; color: #fff; line-height: 1.4; }
         .card-footer { display: flex; justify-content: space-between; align-items: center; }
@@ -34,46 +52,28 @@
         <div class="category-section">
             <div class="row-title">البث المباشر والأخبار</div>
             <div class="horizontal-grid">
-                <div class="card" tabindex="1" data-url="https://www.tod.tv/ar">
+                
+                <a href="https://www.tod.tv/ar" class="card" tabindex="1">
                     <div class="card-title">منصة TOD الرياضية (المباريات مباشر)</div>
                     <div class="card-footer">
                         <div class="card-meta" style="background: rgba(255, 102, 0, 0.1); color: #ff6600;">TOD TV</div>
                     </div>
-                </div>
-                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=NpEaa2P7qZI" class="card" tabindex="1">
                     <div class="card-title">قناة البث الإخباري المستمر</div>
                     <div class="card-footer">
                         <div class="card-meta badge-live">LIVE</div>
                     </div>
-                </div>
-                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=Ir3Vb_709pM">
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=Ir3Vb_709pM" class="card" tabindex="1">
                     <div class="card-title">قناة القرآن الكريم مباشر</div>
                     <div class="card-footer">
                         <div class="card-meta badge-live">LIVE</div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="category-section">
-            <div class="row-title">الوثائقيات وعالم الطبيعة</div>
-            <div class="horizontal-grid">
-                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
-                    <div class="card-title">أسرار المحيطات العميقة</div>
-                    <div class="card-footer">
-                        <div class="card-meta">1080p</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="category-section">
-            <div class="row-title">ريم كيدز - محتوى العائلة والأطفال</div>
-            <div class="horizontal-grid">
-                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
-                    <div class="card-title">قصص وحكايات للأطفال</div>
-                    <div class="card-footer">
-                        <div class="card-meta">Rem Kids</div>
-                    </div>
-                </div>
+                </a>
+
             </div>
         </div>
     </main>
@@ -83,12 +83,14 @@
             document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
         }
         setInterval(updateClock, 1000); updateClock();
-        setTimeout(() => { const firstCard = document.querySelector('.card'); if(firstCard) firstCard.focus(); }, 200);
-        function launchNativeVideo(url) { window.location.href = url; }
+        
+        setTimeout(() => { const firstCard = document.querySelector('.card'); if(firstCard) firstCard.focus(); }, 300);
+
+        // هنا نجعل الصف يتحرك تلقائياً مع الفوكس فقط، وحذفنا دالة التوجيه بالجافا سكريبت تماماً
         document.querySelectorAll('.card').forEach(card => {
-            card.addEventListener('click', function() { const targetUrl = this.getAttribute('data-url'); if(targetUrl) launchNativeVideo(targetUrl); });
-            card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.keyCode === 13) { const targetUrl = this.getAttribute('data-url'); if(targetUrl) launchNativeVideo(targetUrl); } });
-            card.addEventListener('focus', function() { this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); });
+            card.addEventListener('focus', function() { 
+                this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); 
+            });
         });
     </script>
 </body>
