@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - Live TV Platform</title>
+    <title>Smart Rem - Anti-Block TV Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -93,8 +93,7 @@
             justify-content: space-between;
             padding: 20px;
             cursor: pointer;
-            position: relative;
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s;
+            transition: transform 0.25s ease, border-color 0.25s;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
@@ -126,36 +125,37 @@
             border-radius: 6px;
         }
 
-        /* 📺 طبقة مشغل الفيديو (Fullscreen Player Overlay) */
+        /* 📺 تعديل طبقة المشغل لضمان الأولوية القصوى لكرت الشاشة */
         #video-player-container {
-            display: none; /* مخفي افتراضياً */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             background-color: #000;
-            z-index: 9999;
+            z-index: 99999;
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: contain;
+            background-color: #000;
         }
 
-        /* تلميح لكيفية الخروج */
         .player-hint {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.8);
             padding: 8px 15px;
             border-radius: 8px;
             font-size: 0.9rem;
-            color: #ccc;
+            color: #00ff66;
+            z-index: 100000;
             pointer-events: none;
-            z-index: 10000;
+            border: 1px solid rgba(0,255,102,0.2);
         }
     </style>
 </head>
@@ -168,13 +168,13 @@
 
     <div class="row-title">البث المباشر وقنوات التجربة</div>
     <div class="horizontal-grid">
-        <div class="card" tabindex="1" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+        <div class="card" tabindex="1" data-stream="https://html5demos.com/assets/dizzy.mp4">
             <div class="card-title">قناة البث التجريبية 1</div>
             <div class="card-footer">
                 <div class="card-meta">اضغط للتجربة</div>
             </div>
         </div>
-        <div class="card" tabindex="2" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4">
+        <div class="card" tabindex="2" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
             <div class="card-title">قناة البث التجريبية 2</div>
             <div class="card-footer">
                 <div class="card-meta">عرض سينمائي</div>
@@ -183,8 +183,8 @@
     </div>
 
     <div id="video-player-container">
-        <div class="player-hint">اضغط زر الحجوع (Back) بالريموت للعودة للقائمة</div>
-        <video id="tv-video-player" controls></video>
+        <div class="player-hint">اضغط زر الرجوع (Back) بالريموت للعودة</div>
+        <video id="tv-video-player" controls autoplay playsinline preload="auto"></video>
     </div>
 
     <script>
@@ -198,30 +198,47 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // التركيز التلقائي عند الفتح
+        // فوكس تلقائي
         const firstCard = document.querySelector('.card');
         if(firstCard) firstCard.focus();
 
         const playerContainer = document.getElementById('video-player-container');
         const videoPlayer = document.getElementById('tv-video-player');
 
-        // دالة تشغيل الفيديو عند اختيار كارت
+        // دالة تشغيل الفيديو الذكية لكسر حظر الشاشات الصينية
         function playStream(url) {
-            videoPlayer.src = url;
             playerContainer.style.display = 'block';
-            videoPlayer.play();
+            
+            videoPlayer.src = url;
+            videoPlayer.load(); // إجبار المعالج على قراءة الملف فوراً
+            
+            // 🛠️ خدعة كسر الحظر: تشغيل صامت مؤقتاً لتخطي حظر المتصفح
+            videoPlayer.muted = true; 
+            
+            let playPromise = videoPlayer.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // بمجرد أن يبدأ الفيديو في العمل فعلياً، نرفع الصوت تلقائياً بعد نصف ثانية
+                    setTimeout(() => {
+                        videoPlayer.muted = false;
+                    }, 400);
+                }).catch(error => {
+                    // إذا اعترض المتصفح، نقوم بمحاولة تشغيل ثانية إجبارية
+                    console.log("TV Playback intercept caught, retrying...");
+                    videoPlayer.play();
+                });
+            }
         }
 
-        // دالة إغلاق الفيديو والعودة
         function closePlayer() {
             videoPlayer.pause();
             videoPlayer.src = '';
             playerContainer.style.display = 'none';
-            // إعادة الفوكس لأول كارت لضمان استمرار التحكم بالريموت
             document.querySelector('.card').focus();
         }
 
-        // الاستماع لضغطات الريموت كونترول واللوحة
+        // الاستماع للريموت
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
                 const streamUrl = this.getAttribute('data-stream');
@@ -229,7 +246,6 @@
             });
 
             card.addEventListener('keydown', function(e) {
-                // زر OK في الريموت أو Enter في الكيبورد (KeyCode 13)
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     const streamUrl = this.getAttribute('data-stream');
                     if(streamUrl) playStream(streamUrl);
@@ -237,12 +253,11 @@
             });
         });
 
-        // التقاط زر الرجوع بالريموت لإغلاق الفيديو
+        // التقاط زر الرجوع بالريموت
         window.addEventListener('keydown', function(e) {
-            // زر Backspace أو Escape أو زر الرجوع الخاص بأندرويد تي في (عادة keyCode 27 أو 4 أو 8)
-            if (e.key === 'Escape' || e.keyCode === 27 || e.keyCode === 8) {
+            if (e.key === 'Escape' || e.keyCode === 27 || e.keyCode === 8 || e.keyCode === 4) {
                 if (playerContainer.style.display === 'block') {
-                    e.preventDefault(); // منع المتصفح من الخروج تماماً من الصفحة
+                    e.preventDefault();
                     closePlayer();
                 }
             }
