@@ -1,4 +1,4 @@
-﻿package com.todtv.launcher;
+package com.todtv.launcher;
 
 import android.app.Activity;
 import android.os.Bundle;
