@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Rem - TV Hub</title>
     <style>
-        /* ضبط الأبعاد الثابتة للشاشة الصينية 1280x720 */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,60 +15,55 @@
         body {
             background-color: #111;
             color: #fff;
-            width: 1280px;
-            height: 720px;
-            overflow: hidden; /* منع التمرير العشوائي */
-            padding: 40px;
+            width: 100vw; /* يأخذ كامل عرض المتصفح المتاح تلقائياً */
+            height: 100vh; /* يأخذ كامل الارتفاع المتاح تلقائياً */
+            overflow: hidden; 
+            padding: 3vw; /* مسافات أمان مرنة لحواف الشاشة */
+            display: flex;
+            flex-direction: column;
         }
 
-        /* الهيدر العلوي */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            height: 50px;
+            height: 10%;
+            margin-bottom: 2vh;
         }
 
         .logo {
-            font-size: 28px;
+            font-size: 1.8rem;
             font-weight: bold;
-            color: #00ff66; /* الهوية البصرية لـ ريم */
-            text-transform: uppercase;
+            color: #00ff66;
         }
 
         .time {
-            font-size: 20px;
+            font-size: 1.3rem;
             color: #aaa;
         }
 
-        /* القوائم الأفقية */
         .row-title {
-            font-size: 22px;
-            margin-bottom: 15px;
+            font-size: 1.4rem;
+            margin-bottom: 1vh;
             color: #eee;
             font-weight: 600;
         }
 
         .horizontal-grid {
             display: flex;
-            gap: 20px;
+            gap: 1.5vw;
             overflow-x: auto;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            scroll-behavior: smooth;
+            height: 35%; /* توزيع متساوي للأقسام */
+            align-items: center;
         }
 
-        /* إخفاء شريط التمرير الافتراضي */
         .horizontal-grid::-webkit-scrollbar {
             display: none;
         }
 
-        /* كروت الأفلام والقنوات */
         .card {
-            min-width: 220px;
-            max-width: 220px;
-            height: 130px;
+            flex: 0 0 22%; /* يجعل الكروت تتناسق عرضياً حسب حجم الشاشة */
+            height: 85%;
             background: #222;
             border-radius: 8px;
             border: 2px solid transparent;
@@ -79,24 +73,25 @@
             padding: 15px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        /* حالة التركيز (Focus) عند التنقل بالريموت */
         .card:focus, .card.active {
             border-color: #00ff66;
-            transform: scale(1.05);
+            transform: scale(1.03);
             background: #2a2a2a;
             outline: none;
         }
 
         .card-title {
-            font-size: 16px;
+            font-size: 1.1rem;
             font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .card-meta {
-            font-size: 12px;
+            font-size: 0.8rem;
             color: #00ff66;
             margin-top: 5px;
         }
@@ -104,18 +99,16 @@
 </head>
 <body>
 
-    <!-- الهيدر -->
     <header>
         <div class="logo">Smart Rem TV 📺</div>
         <div class="time" id="clock">00:00</div>
     </header>
 
-    <!-- القسم الأول: البث المباشر -->
     <div class="row-title">البث المباشر (Live TV)</div>
     <div class="horizontal-grid">
         <div class="card" tabindex="1">
             <div class="card-title">قناة beIN SPORTS 1</div>
-            <div class="card-meta">جودة HD | Widevine OK</div>
+            <div class="card-meta">جودة HD | DRM OK</div>
         </div>
         <div class="card" tabindex="2">
             <div class="card-title">قناة SSC 1</div>
@@ -131,7 +124,6 @@
         </div>
     </div>
 
-    <!-- القسم الثاني: الأفلام والمسلسلات -->
     <div class="row-title">المضاف حديثاً (TOD & Shahid)</div>
     <div class="horizontal-grid">
         <div class="card" tabindex="5">
@@ -149,17 +141,16 @@
     </div>
 
     <script>
-        // تحديث الساعة التلقائي في الهيدر
         function updateClock() {
             const now = new Date();
-            let hours = now.getHours().toString().padStart(2, '0');
-            let minutes = now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('clock').innerText = hours + ':' + minutes;
+            document.getElementById('clock').innerText = 
+                now.getHours().toString().padStart(2, '0') + ':' + 
+                now.getMinutes().toString().padStart(2, '0');
         }
         setInterval(updateClock, 1000);
         updateClock();
 
-        // تفعيل التنقل التلقائي لأول كارت عند فتح الصفحة
+        // فوكس تلقائي
         document.querySelector('.card').focus();
     </script>
 </body>
