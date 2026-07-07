@@ -1,0 +1,43 @@
+﻿name: Build TOD TV APK
+
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - "tod-tv-launcher.apk"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: android-actions/setup-android@v3
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
+      - name: Build APK
+        working-directory: android-app
+        run: gradle assembleDebug
+
+      - name: Copy APK to site root
+        run: cp android-app/app/build/outputs/apk/debug/app-debug.apk tod-tv-launcher.apk
+
+      - name: Commit APK
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add tod-tv-launcher.apk
+          git commit -m "Build TOD TV launcher APK" || echo "No changes"
+          git push
