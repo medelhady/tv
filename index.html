@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Rem - TV Diagnostic Panel</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 2px solid #334155;
+        }
+        h1 {
+            font-family: sans-serif;
+            margin-top: 0;
+            margin-bottom: 30px;
+            color: #ffffff;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 15px;
+            font-size: 32px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .grid {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--text-muted);
+        }
+        .card.success { border-left-color: var(--accent-green); }
+        .card.danger { border-left-color: var(--accent-red); }
+        
+        .label {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+            word-break: break-all;
+            color: #ffffff;
+        }
+        .highlight {
+            color: #38bdf8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🖥️ Smart Rem - TV Diagnostic Hub</h1>
+    
+    <div class="grid">
+        <div class="card" id="ua-card">
+            <div class="label">🌐 Current User-Agent (Identity)</div>
+            <div class="value highlight" id="ua">Detecting...</div>
+        </div>
+
+        <div class="card" id="res-card">
+            <div class="label">📺 Screen Hardware Resolution</div>
+            <div class="value" id="res">Detecting...</div>
+        </div>
+
+        <div class="card" id="view-card">
+            <div class="label">📐 Browser Viewport Size (Scaling)</div>
+            <div class="value" id="viewport">Detecting...</div>
+        </div>
+
+        <div class="card" id="dpr-card">
+            <div class="label">🔍 Device Pixel Ratio (DPR)</div>
+            <div class="value" id="dpr">Detecting...</div>
+        </div>
+
+        <div class="card" id="drm-card">
+            <div class="label">🛡️ Widevine DRM Support (TOD/Shahid)</div>
+            <div class="value" id="drm">Testing connection...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Fill Basic Browser Info
+    document.getElementById('ua').innerText = navigator.userAgent;
+    document.getElementById('res').innerText = `${screen.width} x ${screen.height}`;
+    document.getElementById('viewport').innerText = `${window.innerWidth} x ${window.innerHeight}`;
+    document.getElementById('dpr').innerText = window.devicePixelRatio;
+
+    // 2. Comprehensive Widevine DRM Test
+    const drmCard = document.getElementById('drm-card');
+    const drmValue = document.getElementById('drm');
+
+    if (navigator.requestMediaKeySystemAccess) {
+        // Robust config to check for basic and standard Widevine capabilities
+        const config = [{
+            initDataTypes: ['cenc'],
+            videoCapabilities: [
+                { contentType: 'video/mp4; codecs="avc1.42E01E"' },
+                { contentType: 'video/mp4; codecs="hvc1.1.6.L93.B0"' } // Adds HEVC/4K check capability
+            ]
+        }];
+        
+        navigator.requestMediaKeySystemAccess('com.widevine.alpha', config)
+            .then(function(access) {
+                drmValue.innerText = "✅ SUPPORTED (L3 or L1 Integration Present)";
+                drmValue.style.color = "var(--accent-green)";
+                drmCard.classList.add('success');
+            })
+            .catch(function(err) {
+                drmValue.innerText = `❌ BLOCKED / NOT SUPPORTED (${err.message})`;
+                drmValue.style.color = "var(--accent-red)";
+                drmCard.classList.add('danger');
+            });
+    } else {
+        drmValue.innerText = "❌ MediaKeys API is missing in this WebView (Legacy Browser)";
+        drmValue.style.color = "var(--accent-red)";
+        drmCard.classList.add('danger');
+    }
+</script>
+
+</body>
+</html>
