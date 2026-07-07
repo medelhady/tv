@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +10,11 @@
         body { background: radial-gradient(circle at center, #111613 0%, #070908 100%); color: #fff; width: 100vw; height: 100vh; padding: 3vw; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
         .login-container { background: rgba(20, 25, 22, 0.9); border: 2px solid #00ff66; border-radius: 20px; padding: 40px; width: 90%; max-width: 500px; box-shadow: 0 0 30px rgba(0, 255, 102, 0.2); text-align: center; }
-        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,102,0.3); }
-        h3 { margin-bottom: 30px; color: #a0a5a2; font-size: 1.1rem; }
+        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,102,0.3); letter-spacing: 1px; }
+        h3 { margin-bottom: 30px; color: #a0a5a2; font-size: 1.1rem; font-weight: 400; }
         
-        .input-group { margin-bottom: 20px; text-align: right; }
-        .input-group label { display: block; margin-bottom: 8px; color: #00ff66; font-weight: 600; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 8px; color: #00ff66; font-weight: 600; font-size: 1rem; }
         .input-group input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 1.2rem; text-align: left; }
         .input-group input:focus { border-color: #00ff66; background: rgba(0,255,102,0.05); outline: none; }
         
@@ -27,50 +27,50 @@
 <body>
 
     <div class="login-container">
-        <div class="logo">🎛️ SMART REM TV</div>
-        <h3>بوابة تخطي حظر شاشات الصينية (TOD Bypass)</h3>
+        <div class="logo">SMART REM TV</div>
+        <h3>TOD TV - Chinese Screen Bypass Gateway</h3>
         
         <div class="input-group">
-            <label>البريد الإلكتروني لـ TOD:</label>
-            <input type="email" id="tod-email" tabindex="1" placeholder="your-email@example.com" value="">
+            <label>TOD Email Address:</label>
+            <input type="email" id="tod-email" tabindex="1" placeholder="enter your email here" value="">
         </div>
         
-        <button class="btn-submit" id="submit-btn" tabindex="2" onclick="startBypass()">🚀 اختراق وتفعيل زر المتابعة</button>
+        <button class="btn-submit" id="submit-btn" tabindex="2" onclick="startBypass()">🚀 Bypass & Trigger Continue</button>
         
-        <p class="bypass-note">الواجهة ستقوم بحقن البيانات وتوليد إشارة حركة حقيقية لتخطي عناد متصفح الشاشة.</p>
+        <p class="bypass-note">This gateway injects events natively to force the "Continue" button action on TV web browsers.</p>
     </div>
 
     <script>
-        // جعل الفوكس يبدأ فوراً في خانة الإيميل عند فتح الصفحة لتسهيل الريموت
+        // Auto-focus email input on load for easy remote control interaction
         setTimeout(() => { document.getElementById('tod-email').focus(); }, 300);
 
         function startBypass() {
             const emailValue = document.getElementById('tod-email').value;
-            if(!emailValue) { alert('الرجاء كتابة الإيميل أولاً'); return; }
+            if(!emailValue) { alert('Please enter your email first!'); return; }
             
-            // فتح صفحة تسجيل دخول TOD في نافذة جديدة
-            const todWindow = window.open("https://www.tod.tv/ar/login", "_blank");
+            // Open TOD Login page in a new window/tab
+            const todWindow = window.open("https://www.tod.tv/en/login", "_blank");
             
-            // انتظر حتى تفتح الصفحة بالكامل على الشاشة ثم احقن الإشارات البرمجية
+            // Wait for the TV browser to render the page, then inject the bypass payload
             setTimeout(() => {
                 try {
-                    // كود تخطي الحظر: حقن النص وتوليد الـ Input Event يدوياً كأنها لوحة مفاتيح حقيقية
                     todWindow.postMessage({
                         type: "BYPASS_TOD",
                         email: emailValue
                     }, "*");
                     
-                    // تنفيذ حيلة الحقن المباشر في المتصفح
+                    // Native script injection to force input signals and simulate click events
                     todWindow.eval(`
                         var emailInput = document.querySelector('input[type="email"]');
                         if(emailInput) {
                             emailInput.focus();
                             emailInput.value = "${emailValue}";
-                            // توليد الإشارة التي ينتظرها الموقع لتفعيل زر المتابعة
+                            
+                            // Dispatches standard input events to satisfy React/Vue reactive bindings
                             var event = new Event('input', { bubbles: true });
                             emailInput.dispatchEvent(event);
                             
-                            // البحث عن زر المتابعة والضغط عليه فوراً
+                            // Finds the submission trigger and forces navigation
                             setTimeout(() => {
                                 var btn = document.querySelector('button[type="submit"]') || document.querySelector('.btn') || document.querySelector('button');
                                 if(btn) btn.click();
@@ -78,9 +78,9 @@
                         }
                     `);
                 } catch(e) {
-                    console.log("بروتوكول الحماية يمنع الحقن المباشر المتقاطع، جاري الانتقال للطريقة البديلة...");
+                    console.log("Cross-origin barrier encountered. Proceeding with standard layout fallback.");
                 }
-            }, 4000); // انتظر 4 ثوانٍ لضمان تحميل صفحة TOD تماماً على معالج الشاشة الضعيف
+            }, 4000); // 4-second delay optimal for Smart TV performance
         }
     </script>
 </body>
