@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem TV - Copy Gateway</title>
+    <title>Smart Rem TV - Direct Access</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
@@ -18,8 +18,12 @@
         .input-group input { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #fff; font-size: 1.2rem; text-align: left; }
         .input-group input:focus { border-color: #00ff66; background: rgba(0,255,102,0.05); outline: none; }
         
-        .btn-submit { width: 100%; padding: 15px; background: #ff6600; color: #fff; border: none; border-radius: 10px; font-size: 1.3rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; }
-        .btn-submit:focus { background: #e05500; box-shadow: 0 0 20px rgba(255, 102, 0, 0.5); outline: none; }
+        /* أزرار مقسمة لعدم تعليق المتصفح */
+        .btn-action { width: 100%; padding: 15px; color: #fff; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: 0.2s; margin-top: 10px; display: block; text-decoration: none; text-align: center; }
+        .btn-blue { background: #007bff; }
+        .btn-blue:focus { background: #0056b3; box-shadow: 0 0 20px rgba(0, 123, 255, 0.5); outline: none; }
+        .btn-orange { background: #ff6600; }
+        .btn-orange:focus { background: #e05500; box-shadow: 0 0 20px rgba(255, 102, 0, 0.5); outline: none; }
         
         .steps { margin-top: 25px; text-align: left; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
         .steps p { font-size: 0.85rem; color: #a0a5a2; margin-bottom: 5px; }
@@ -29,41 +33,34 @@
 
     <div class="login-container">
         <div class="logo">SMART REM TV</div>
-        <h3>TOD TV - Smart Clipboard Helper</h3>
+        <h3>TOD TV - Chinese Screen Native Fix</h3>
         
         <div class="input-group">
             <label>Enter Your TOD Email:</label>
-            <input type="email" id="tod-email" tabindex="1" placeholder="your-email@example.com">
+            <input type="email" id="tod-email" tabindex="1" placeholder="your-email@example.com" value="medelhady@gmail.com">
         </div>
         
-        <button class="btn-submit" id="submit-btn" tabindex="2" onclick="copyAndLaunch()">📋 Copy Email & Open TOD</button>
+        <button class="btn-action btn-blue" id="focus-btn" tabindex="2" onclick="highlightText()">1. Highlight Email</button>
+        
+        <a href="https://www.tod.tv/en/login" class="btn-action btn-orange" id="launch-btn" tabindex="3">2. Open TOD Login</a>
         
         <div class="steps">
-            <p style="color: #00ff66; font-weight: bold; margin-bottom: 8px;">How to use on TV:</p>
-            <p>1. Type email here and press the orange button.</p>
-            <p>2. When TOD opens, click the email box on screen.</p>
-            <p>3. Use TV Keyboard to select <b>"Paste"</b> or <b>"لصق"</b>.</p>
-            <p>4. Click Continue! (It will work 100%)</p>
+            <p style="color: #00ff66; font-weight: bold; margin-bottom: 8px;">New Safe TV Method:</p>
+            <p>1. Click <b>"1. Highlight Email"</b> -> (Email gets selected).</p>
+            <p>2. Use your TV remote copy option if available, OR just keep it highlighted.</p>
+            <p>3. Click <b>"2. Open TOD Login"</b> -> (Will open instantly without freeze).</p>
         </div>
     </div>
 
     <script>
         setTimeout(() => { document.getElementById('tod-email').focus(); }, 300);
 
-        function copyAndLaunch() {
+        // وظيفة التظليل فقط دون استدعاء دوال الحافظة المعقدة للمتصفحات القديمة
+        function highlightText() {
             const emailInput = document.getElementById('tod-email');
-            if(!emailInput.value) { alert('Please enter your email first!'); return; }
-            
-            // نسخ الإيميل بداخل ذاكرة كليب بورد الخاصة بنظام الشاشة
+            emailInput.focus();
             emailInput.select();
             emailInput.setSelectionRange(0, 99999);
-            navigator.clipboard.writeText(emailInput.value).then(() => {
-                // بعد النجاح في النسخ، فتح موقع TOD بشكل طبيعي وبدون تداخل برمجى
-                window.location.href = "https://www.tod.tv/en/login";
-            }).catch(() => {
-                // حل بديل إذا كان المتصفح قديماً جداً ولا يدعم الحفاظ على كليب بورد
-                window.location.href = "https://www.tod.tv/en/login";
-            });
         }
     </script>
 </body>
