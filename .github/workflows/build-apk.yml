@@ -5,6 +5,7 @@ on:
     branches: [ main ]
     paths-ignore:
       - "tod-tv-launcher.apk"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -23,9 +24,11 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.7
+      - name: Install Gradle
+        run: |
+          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip gradle-8.7-bin.zip
+          echo "$PWD/gradle-8.7/bin" >> $GITHUB_PATH
 
       - name: Build APK
         working-directory: android-app
