@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - Video Engine Test</title>
+    <title>Smart Rem - Total Swap Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -14,11 +14,17 @@
         }
 
         body {
-            background: radial-gradient(circle at center, #1a1f1c 0%, #0d0f0e 100%);
+            background: #0d0f0e;
             color: #fff;
             width: 100vw;
             height: 100vh;
             overflow: hidden;
+        }
+
+        /* 🎛️ حاوي الواجهة الرئيسية بالكامل */
+        #main-hub-ui {
+            width: 100%;
+            height: 100%;
             padding: 3.5vw;
             display: flex;
             flex-direction: column;
@@ -44,10 +50,6 @@
         .time {
             font-size: 1.4rem;
             color: #888;
-            font-weight: 600;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 5px 15px;
-            border-radius: 20px;
         }
 
         .row-title {
@@ -55,18 +57,6 @@
             margin-bottom: 1.5vh;
             color: #fff;
             font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .row-title::before {
-            content: '';
-            display: inline-block;
-            width: 4px;
-            height: 18px;
-            background: #00ff66;
-            border-radius: 2px;
         }
 
         .horizontal-grid {
@@ -75,7 +65,6 @@
             overflow-x: auto;
             height: 33%;
             align-items: center;
-            padding: 10px 5px;
         }
 
         .horizontal-grid::-webkit-scrollbar {
@@ -85,99 +74,65 @@
         .card {
             flex: 0 0 21%;
             height: 95%;
-            background: linear-gradient(135deg, rgba(40,40,40,0.7) 0%, rgba(20,20,20,0.8) 100%);
+            background: #1a1f1c;
             border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 2px solid transparent;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            justify-content: center;
             padding: 20px;
             cursor: pointer;
-            transition: transform 0.25s ease, border-color 0.25s;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
         .card:focus {
             border-color: #00ff66;
-            transform: scale(1.06);
-            background: linear-gradient(135deg, #223c2b 0%, #111e15 100%);
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
+            transform: scale(1.05);
+            background: #223c2b;
             outline: none;
         }
 
         .card-title {
             font-size: 1.15rem;
             font-weight: 700;
-            color: #fff;
         }
 
-        .card-meta {
-            font-size: 0.8rem;
-            color: #00ff66;
-            background: rgba(0, 255, 102, 0.1);
-            padding: 2px 8px;
-            border-radius: 6px;
-            align-self: flex-start;
-        }
-
-        /* 📺 طبقة المشغل الذكي الجديد القائم على اليوتيوب */
-        #video-player-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* 📺 حاوي مشغل الفيديو المستقل تماماً (مخفي في البداية) */
+        #pure-video-screen {
+            display: none; /* مخفي تماماً لمنع تشتيت المعالج */
             width: 100vw;
             height: 100vh;
             background-color: #000;
-            z-index: 99999;
         }
 
-        #player-wrapper {
+        iframe {
             width: 100%;
             height: 100%;
+            border: none;
             background-color: #000;
-        }
-
-        .player-hint {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            padding: 8px 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            color: #00ff66;
-            z-index: 100000;
-            pointer-events: none;
-            border: 1px solid rgba(0,255,102,0.2);
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">🎛️ SMART REM TV</div>
-        <div class="time" id="clock">00:00</div>
-    </header>
+    <div id="main-hub-ui">
+        <header>
+            <div class="logo">🎛️ SMART REM TV</div>
+            <div class="time" id="clock">00:00</div>
+        </header>
 
-    <div class="row-title">قنوات الفحص واختبار تشغيل الصوت والصورة</div>
-    <div class="horizontal-grid">
-        <div class="card" tabindex="1" data-youtube="NpEaa2P7qZI">
-            <div class="card-title">قناة فحص الطبيعة (4K)</div>
-            <div style="height: 10px;"></div>
-            <div class="card-meta">اضغط للاختبار</div>
-        </div>
-        <div class="card" tabindex="2" data-youtube="Ir3Vb_709pM">
-            <div class="card-title">إعلان فيلم أكشن تجريبي</div>
-            <div style="height: 10px;"></div>
-            <div class="card-meta">عرض صوت وصورة</div>
+        <div class="row-title">قنوات فحص معالج الشاشة</div>
+        <div class="horizontal-grid">
+            <div class="card" tabindex="1" data-youtube="NpEaa2P7qZI">
+                <div class="card-title">قناة الطبيعة العالمية</div>
+            </div>
+            <div class="card" tabindex="2" data-youtube="Ir3Vb_709pM">
+                <div class="card-title">إعلان سينمائي تجريبي</div>
+            </div>
         </div>
     </div>
 
-    <div id="video-player-container">
-        <div class="player-hint">اضغط زر الرجوع (Back) بالريموت للعودة للقائمة</div>
-        <div id="player-wrapper"></div>
-    </div>
+    <div id="pure-video-screen"></div>
 
     <script>
         // تحديث الساعة
@@ -190,55 +145,53 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // فوكس تلقائي
-        const firstCard = document.querySelector('.card');
-        if(firstCard) firstCard.focus();
+        document.querySelector('.card').focus();
 
-        const playerContainer = document.getElementById('video-player-container');
-        const playerWrapper = document.getElementById('player-wrapper');
+        const mainHub = document.getElementById('main-hub-ui');
+        const videoScreen = document.getElementById('pure-video-screen');
 
-        // دالة تشغيل اليوتيوب الإجبارية لتخطي حظر الشاشات
-        function playYoutubeStream(videoId) {
-            playerContainer.style.display = 'block';
+        // الحيلة: إخفاء الواجهة بالكامل وتخصيص الشاشة للفيديو فقط
+        function playVideo(videoId) {
+            mainHub.style.display = 'none'; // اختفاء كامل للواجهة
+            videoScreen.style.display = 'block'; // ظهور شاشة الفيديو المباشرة
             
-            // نستخدم تضمين يوتيوب مخصص للتلفزيونات (يتضمن تشغيل تلقائي وصوت حقيقي)
-            playerWrapper.innerHTML = `
+            videoScreen.innerHTML = `
                 <iframe 
-                    id="tv-iframe" 
-                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=0&rel=0&showinfo=0&iv_load_policy=3" 
-                    style="width:100%; height:100%; border:none;" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0" 
                     allow="autoplay; encrypted-media" 
                     allowfullscreen>
                 </iframe>`;
         }
 
-        function closePlayer() {
-            playerWrapper.innerHTML = ''; // تدمير المشغل لوقف الصوت فوراً
-            playerContainer.style.display = 'none';
-            document.querySelector('.card').focus();
+        // إلغاء الفيديو وإعادة إظهار الواجهة
+        function closeVideo() {
+            videoScreen.innerHTML = ''; // تدمير الـ iframe فوراً
+            videoScreen.style.display = 'none';
+            mainHub.style.display = 'flex'; // إعادة تفعيل الواجهة
+            document.querySelector('.card').focus(); // إعادة التحكم بالريموت
         }
 
-        // الاستماع للريموت والضغط
+        // تفعيل أزرار الريموت والضغط
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
                 const videoId = this.getAttribute('data-youtube');
-                if(videoId) playYoutubeStream(videoId);
+                if(videoId) playVideo(videoId);
             });
 
             card.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
                     const videoId = this.getAttribute('data-youtube');
-                    if(videoId) playYoutubeStream(videoId);
+                    if(videoId) playVideo(videoId);
                 }
             });
         });
 
-        // التقاط زر الرجوع بالريموت
+        // زر الرجوع بالريموت للخروج من الفيديو
         window.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' || e.keyCode === 27 || e.keyCode === 8 || e.keyCode === 4) {
-                if (playerContainer.style.display === 'block') {
+                if (videoScreen.style.display === 'block') {
                     e.preventDefault();
-                    closePlayer();
+                    closeVideo();
                 }
             }
         });
