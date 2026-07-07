@@ -1,0 +1,161 @@
+﻿<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TOD TV Launcher</title>
+  <style>
+    body {
+      margin: 0;
+      background: #081018;
+      color: white;
+      font-family: Arial, Tahoma, sans-serif;
+      font-size: 26px;
+      padding: 28px;
+    }
+    .box {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #15202b;
+      border: 2px solid #314255;
+      padding: 28px;
+    }
+    h1 {
+      margin: 0 0 18px;
+      font-size: 44px;
+    }
+    p {
+      color: #cbd8e6;
+      line-height: 1.5;
+    }
+    a, button {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      margin: 18px 0;
+      padding: 24px;
+      background: #0798e8;
+      color: white;
+      border: 3px solid white;
+      text-align: center;
+      text-decoration: none;
+      font-size: 30px;
+      font-weight: bold;
+    }
+    a:focus, button:focus {
+      outline: 7px solid #ffd000;
+      background: #12b2ff;
+    }
+    .alt {
+      background: #2b3948;
+    }
+    .log {
+      direction: ltr;
+      text-align: left;
+      white-space: pre-wrap;
+      background: #0c141d;
+      padding: 18px;
+      margin-top: 18px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <main class="box">
+    <h1>TOD TV Launcher</h1>
+
+    <p>
+      حمّل تطبيق تشغيل TOD الخاص بالتلفزيونات الصينية، ثم ثبّته من مدير الملفات أو USB.
+    </p>
+
+    <a id="downloadBtn" href="/tod-tv-launcher.apk" download>
+      تحميل التطبيق APK
+    </a>
+
+    <button class="alt" onclick="checkDevice()">فحص التلفزيون</button>
+
+    <button class="alt" onclick="showHelp()">طريقة التثبيت</button>
+
+    <div id="log" class="log">جاهز</div>
+  </main>
+
+  <script>
+    var log = document.getElementById('log');
+
+    function write(text) {
+      log.innerHTML = text;
+    }
+
+    function checkDevice() {
+      var out = '';
+      out += 'User Agent:\n' + navigator.userAgent + '\n\n';
+      out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
+      out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
+      out += 'EME API: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
+
+      if (!navigator.requestMediaKeySystemAccess) {
+        write(out + 'Widevine: NO');
+        return;
+      }
+
+      navigator.requestMediaKeySystemAccess('com.widevine.alpha', [{
+        initDataTypes: ['cenc'],
+        audioCapabilities: [{ contentType: 'audio/mp4; codecs="mp4a.40.2"' }],
+        videoCapabilities: [{ contentType: 'video/mp4; codecs="avc1.42E01E"' }]
+      }]).then(function(access) {
+        write(out + 'Widevine: YES\nKeySystem: ' + access.keySystem);
+      }).catch(function(error) {
+        write(out + 'Widevine: NO\nError: ' + error.name);
+      });
+    }
+
+    function showHelp() {
+      write(
+        'Install steps:\n' +
+        '1. Download tod-tv-launcher.apk\n' +
+        '2. Copy it to USB if needed\n' +
+        '3. Open File Manager on TV\n' +
+        '4. Enable Unknown Sources if asked\n' +
+        '5. Install and open the app'
+      );
+    }
+
+    document.onkeydown = function(event) {
+      event = event || window.event;
+      var code = event.keyCode || event.which;
+      var items = document.querySelectorAll('a, button');
+      var active = document.activeElement;
+      var index = 0;
+
+      for (var i = 0; i < items.length; i++) {
+        if (items[i] === active) index = i;
+      }
+
+      if (code === 38 || code === 37) {
+        index--;
+        if (index < 0) index = items.length - 1;
+        items[index].focus();
+        return false;
+      }
+
+      if (code === 40 || code === 39) {
+        index++;
+        if (index >= items.length) index = 0;
+        items[index].focus();
+        return false;
+      }
+
+      if (code === 13 && active && active.click) {
+        active.click();
+        return false;
+      }
+
+      return true;
+    };
+
+    window.onload = function() {
+      document.getElementById('downloadBtn').focus();
+    };
+  </script>
+</body>
+</html>
