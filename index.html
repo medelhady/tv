@@ -1,72 +1,176 @@
 ﻿<!doctype html>
-<html lang="ar" dir="rtl">
+<html>
 <head>
   <meta charset="utf-8">
-  <title>TV Browser Test</title>
+  <title>TOD TV Compatibility</title>
   <style>
     body {
-      background: #111;
+      margin: 0;
+      background: #101418;
       color: white;
       font-family: Arial, sans-serif;
       font-size: 28px;
-      padding: 30px;
+      padding: 28px;
     }
-    a, button {
+    h1 {
+      font-size: 40px;
+      margin: 0 0 22px;
+    }
+    button, a {
       display: block;
       width: 100%;
       box-sizing: border-box;
-      margin: 20px 0;
-      padding: 25px;
-      font-size: 30px;
-      background: #1565c0;
+      margin: 18px 0;
+      padding: 24px;
+      background: #08a8f8;
       color: white;
-      border: 0;
+      border: 2px solid #ffffff;
+      font-size: 30px;
       text-align: center;
       text-decoration: none;
     }
+    button:focus, a:focus {
+      outline: 6px solid #ffcc00;
+    }
+    .secondary {
+      background: #26313c;
+    }
     .box {
-      background: #222;
-      padding: 20px;
-      margin-top: 20px;
+      margin-top: 22px;
+      padding: 22px;
+      background: #202833;
+      color: white;
       white-space: pre-wrap;
       direction: ltr;
       text-align: left;
+      font-size: 24px;
     }
   </style>
 </head>
 <body>
-  <h1>TV Browser Test</h1>
+  <h1>TOD TV Compatibility</h1>
 
-  <a href="https://www.tod.tv/">Open TOD</a>
-  <a href="https://connect.bein.com/">Open beIN CONNECT</a>
+  <button onclick="runFullTest()">1 - Test Browser + DRM</button>
 
-  <button onclick="runTest()">Test Browser Support</button>
+  <a href="https://www.tod.tv/" target="_self">2 - Open TOD Same Page</a>
+
+  <button onclick="openTodReplace()">3 - Open TOD with location.replace</button>
+
+  <button class="secondary" onclick="openTodMobile()">4 - Open TOD Mobile Path</button>
 
   <div id="result" class="box">Press test button</div>
 
   <script>
-    function runTest() {
-      var out = '';
+    var result = document.getElementById('result');
 
-      out += 'User Agent:\n' + navigator.userAgent + '\n\n';
-      out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
+    function write(text) {
+      result.innerHTML = text;
+    }
 
-      out += 'Local Storage: ';
+    function add(line) {
+      result.innerHTML += line + '\n';
+    }
+
+    function openTodReplace() {
+      write('Opening TOD with location.replace...');
+      window.location.replace('https://www.tod.tv/');
+    }
+
+    function openTodMobile() {
+      write('Opening TOD mobile path...');
+      window.location.href = 'https://www.tod.tv/ar';
+    }
+
+    function testStorage() {
       try {
-        localStorage.setItem('x', '1');
-        localStorage.removeItem('x');
-        out += 'YES\n';
+        localStorage.setItem('tv_test', '1');
+        localStorage.removeItem('tv_test');
+        return 'YES';
       } catch (e) {
-        out += 'NO\n';
+        return 'NO';
+      }
+    }
+
+    function runFullTest() {
+      write('');
+      add('User Agent:');
+      add(navigator.userAgent);
+      add('');
+      add('Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO'));
+      add('Local Storage: ' + testStorage());
+      add('Promise: ' + (window.Promise ? 'YES' : 'NO'));
+      add('Fetch: ' + (window.fetch ? 'YES' : 'NO'));
+      add('MediaSource: ' + (window.MediaSource ? 'YES' : 'NO'));
+      add('EME API: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO'));
+
+      if (!navigator.requestMediaKeySystemAccess) {
+        add('Widevine: NO - EME API missing');
+        return;
       }
 
-      out += 'Promise: ' + (window.Promise ? 'YES' : 'NO') + '\n';
-      out += 'Fetch: ' + (window.fetch ? 'YES' : 'NO') + '\n';
-      out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
-      out += 'EME DRM: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
+      var config = [{
+        initDataTypes: ['cenc'],
+        audioCapabilities: [{
+          contentType: 'audio/mp4; codecs="mp4a.40.2"'
+        }],
+        videoCapabilities: [{
+          contentType: 'video/mp4; codecs="avc1.42E01E"'
+        }]
+      }];
 
-      document.getElementById('result').innerHTML = out;
+      navigator.requestMediaKeySystemAccess('com.widevine.alpha', config)
+        .then(function(access) {
+          add('Widevine: YES');
+          add('Key System: ' + access.keySystem);
+          add('');
+          add('Next: try opening TOD with buttons 2, 3, and 4.');
+        })
+        .catch(function(error) {
+          add('Widevine: NO or blocked');
+          add('Error: ' + error.name);
+          add('');
+          add('If Widevine is NO, TOD video will not play in this browser.');
+        });
     }
+
+    document.onkeydown = function(event) {
+      event = event || window.event;
+      var code = event.keyCode || event.which;
+      var items = document.querySelectorAll('button, a');
+      var active = document.activeElement;
+      var index = 0;
+      var i;
+
+      for (i = 0; i < items.length; i++) {
+        if (items[i] === active) index = i;
+      }
+
+      if (code === 38 || code === 37) {
+        index = index - 1;
+        if (index < 0) index = items.length - 1;
+        items[index].focus();
+        return false;
+      }
+
+      if (code === 40 || code === 39) {
+        index = index + 1;
+        if (index >= items.length) index = 0;
+        items[index].focus();
+        return false;
+      }
+
+      if (code === 13 && active && active.click) {
+        active.click();
+        return false;
+      }
+
+      return true;
+    };
+
+    window.onload = function() {
+      var first = document.querySelector('button, a');
+      if (first) first.focus();
+    };
   </script>
 </body>
 </html>
