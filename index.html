@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - Premium TV Hub</title>
+    <title>Smart Rem - Live TV Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
@@ -24,7 +24,6 @@
             flex-direction: column;
         }
 
-        /* الهيدر الاحترافي */
         header {
             display: flex;
             justify-content: space-between;
@@ -40,9 +39,6 @@
             font-weight: 900;
             color: #00ff66;
             text-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
 
         .time {
@@ -52,16 +48,13 @@
             background: rgba(255, 255, 255, 0.03);
             padding: 5px 15px;
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* عناوين الصفوف */
         .row-title {
             font-size: 1.3rem;
             margin-bottom: 1.5vh;
             color: #fff;
             font-weight: 700;
-            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -76,7 +69,6 @@
             border-radius: 2px;
         }
 
-        /* شبكة الكروت المرنة والأفقية */
         .horizontal-grid {
             display: flex;
             gap: 2vw;
@@ -90,7 +82,6 @@
             display: none;
         }
 
-        /* تصميم الكارت السينمائي الجديد */
         .card {
             flex: 0 0 21%;
             height: 95%;
@@ -103,88 +94,68 @@
             padding: 20px;
             cursor: pointer;
             position: relative;
-            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s, box-shadow 0.25s;
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s;
             box-shadow: 0 8px 24px rgba(0,0,0,0.4);
         }
 
-        /* تأثير النيون والفخامة عند حركة الريموت (Focus) */
-        .card:focus, .card.active {
+        .card:focus {
             border-color: #00ff66;
             transform: scale(1.06);
             background: linear-gradient(135deg, #223c2b 0%, #111e15 100%);
-            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4), 0 10px 30px rgba(0,0,0,0.6);
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.4);
             outline: none;
-        }
-
-        /* أيقونة اللعب الوهمية في وسط الكارت عند التركيز */
-        .card::after {
-            content: '▶';
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            font-size: 1.8rem;
-            color: #00ff66;
-            opacity: 0;
-            transition: all 0.2s ease;
-        }
-        .card:focus::after {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
         }
 
         .card-title {
             font-size: 1.15rem;
             font-weight: 700;
             color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            z-index: 2;
         }
 
-        /* تفاصيل الكارت السفلي */
         .card-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 2;
         }
 
         .card-meta {
             font-size: 0.8rem;
             color: #00ff66;
-            font-weight: 600;
             background: rgba(0, 255, 102, 0.1);
             padding: 2px 8px;
             border-radius: 6px;
         }
 
-        /* شعار البث المباشر المتحرك */
-        .badge-live {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.75rem;
-            color: #ff3333;
-            font-weight: 700;
-            background: rgba(255, 51, 51, 0.1);
-            padding: 2px 8px;
-            border-radius: 6px;
+        /* 📺 طبقة مشغل الفيديو (Fullscreen Player Overlay) */
+        #video-player-container {
+            display: none; /* مخفي افتراضياً */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 9999;
         }
 
-        .dot {
-            width: 6px;
-            height: 6px;
-            background-color: #ff3333;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.6; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.6; }
+        /* تلميح لكيفية الخروج */
+        .player-hint {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #ccc;
+            pointer-events: none;
+            z-index: 10000;
         }
     </style>
 </head>
@@ -195,65 +166,29 @@
         <div class="time" id="clock">00:00</div>
     </header>
 
-    <div class="row-title">البث المباشر الحصري</div>
+    <div class="row-title">البث المباشر وقنوات التجربة</div>
     <div class="horizontal-grid">
-        <div class="card" tabindex="1">
-            <div class="card-title">beIN SPORTS 1 HD</div>
+        <div class="card" tabindex="1" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+            <div class="card-title">قناة البث التجريبية 1</div>
             <div class="card-footer">
-                <div class="badge-live"><span class="dot"></span>مباشر</div>
-                <div class="card-meta">4K Ultra</div>
+                <div class="card-meta">اضغط للتجربة</div>
             </div>
         </div>
-        <div class="card" tabindex="2">
-            <div class="card-title">SSC SPORTS 1</div>
+        <div class="card" tabindex="2" data-stream="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4">
+            <div class="card-title">قناة البث التجريبية 2</div>
             <div class="card-footer">
-                <div class="badge-live"><span class="dot"></span>مباشر</div>
-                <div class="card-meta">HD</div>
-            </div>
-        </div>
-        <div class="card" tabindex="3">
-            <div class="card-title">SHAHID الأولى</div>
-            <div class="card-footer">
-                <div class="badge-live"><span class="dot"></span>مباشر</div>
-                <div class="card-meta">Premium</div>
-            </div>
-        </div>
-        <div class="card" tabindex="4">
-            <div class="card-title">AD SPORTS HD</div>
-            <div class="card-footer">
-                <div class="badge-live"><span class="dot"></span>مباشر</div>
-                <div class="card-meta">مجاني</div>
+                <div class="card-meta">عرض سينمائي</div>
             </div>
         </div>
     </div>
 
-    <div class="row-title">مكتبة الأفلام والمسلسلات (TOD)</div>
-    <div class="horizontal-grid">
-        <div class="card" tabindex="5">
-            <div class="card-title">فيلم الأكشن والإثارة</div>
-            <div class="card-footer">
-                <div style="font-size: 0.8rem; color: #aaa;">ساعتان | 2026</div>
-                <div class="card-meta" style="color: #ffaa00; background: rgba(255,170,0,0.1);">★ 8.9</div>
-            </div>
-        </div>
-        <div class="card" tabindex="6">
-            <div class="card-title">مسلسل الدراما الحصري</div>
-            <div class="card-footer">
-                <div style="font-size: 0.8rem; color: #aaa;">الحلقة 5</div>
-                <div class="card-meta">جديد</div>
-            </div>
-        </div>
-        <div class="card" tabindex="7">
-            <div class="card-title">الوثائقي الرياضي</div>
-            <div class="card-footer">
-                <div style="font-size: 0.8rem; color: #aaa;">إنتاج خاص</div>
-                <div class="card-meta">TOD</div>
-            </div>
-        </div>
+    <div id="video-player-container">
+        <div class="player-hint">اضغط زر الحجوع (Back) بالريموت للعودة للقائمة</div>
+        <video id="tv-video-player" controls></video>
     </div>
 
     <script>
-        // كود تشغيل الساعة الذكية لقراءة التوقيت المحلي بدقة
+        // تحديث الساعة
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = 
@@ -263,8 +198,55 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // تفعيل الفوكس التلقائي على أول كارت للتحكم بالريموت فوراً
-        document.querySelector('.card').focus();
+        // التركيز التلقائي عند الفتح
+        const firstCard = document.querySelector('.card');
+        if(firstCard) firstCard.focus();
+
+        const playerContainer = document.getElementById('video-player-container');
+        const videoPlayer = document.getElementById('tv-video-player');
+
+        // دالة تشغيل الفيديو عند اختيار كارت
+        function playStream(url) {
+            videoPlayer.src = url;
+            playerContainer.style.display = 'block';
+            videoPlayer.play();
+        }
+
+        // دالة إغلاق الفيديو والعودة
+        function closePlayer() {
+            videoPlayer.pause();
+            videoPlayer.src = '';
+            playerContainer.style.display = 'none';
+            // إعادة الفوكس لأول كارت لضمان استمرار التحكم بالريموت
+            document.querySelector('.card').focus();
+        }
+
+        // الاستماع لضغطات الريموت كونترول واللوحة
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const streamUrl = this.getAttribute('data-stream');
+                if(streamUrl) playStream(streamUrl);
+            });
+
+            card.addEventListener('keydown', function(e) {
+                // زر OK في الريموت أو Enter في الكيبورد (KeyCode 13)
+                if (e.key === 'Enter' || e.keyCode === 13) {
+                    const streamUrl = this.getAttribute('data-stream');
+                    if(streamUrl) playStream(streamUrl);
+                }
+            });
+        });
+
+        // التقاط زر الرجوع بالريموت لإغلاق الفيديو
+        window.addEventListener('keydown', function(e) {
+            // زر Backspace أو Escape أو زر الرجوع الخاص بأندرويد تي في (عادة keyCode 27 أو 4 أو 8)
+            if (e.key === 'Escape' || e.keyCode === 27 || e.keyCode === 8) {
+                if (playerContainer.style.display === 'block') {
+                    e.preventDefault(); // منع المتصفح من الخروج تماماً من الصفحة
+                    closePlayer();
+                }
+            }
+        });
     </script>
 </body>
 </html>
