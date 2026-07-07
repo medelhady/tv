@@ -2,51 +2,35 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>TOD TV Launcher</title>
+  <title>TOD TV Debug Launcher</title>
   <style>
     body {
       margin: 0;
-      background: #0f141a;
+      background: #101418;
       color: white;
       font-family: Arial, sans-serif;
       font-size: 28px;
       padding: 26px;
     }
-    h1 {
-      font-size: 42px;
-      margin: 0 0 20px;
-    }
-    .hint {
-      background: #202833;
-      padding: 20px;
-      margin-bottom: 20px;
-      font-size: 24px;
-      line-height: 1.4;
-    }
-    button, a {
+    h1 { font-size: 40px; }
+    button {
       display: block;
       width: 100%;
-      box-sizing: border-box;
       margin: 16px 0;
       padding: 24px;
+      font-size: 30px;
       background: #08a8f8;
       color: white;
       border: 2px solid white;
-      font-size: 30px;
-      text-align: center;
-      text-decoration: none;
     }
-    button:focus, a:focus {
+    button:focus {
       outline: 7px solid #ffcc00;
-      background: #16b6ff;
     }
-    .dark {
-      background: #273240;
-    }
+    .dark { background: #26313c; }
     .box {
-      margin-top: 20px;
-      padding: 20px;
       background: #202833;
+      padding: 20px;
+      margin-top: 20px;
       white-space: pre-wrap;
       direction: ltr;
       text-align: left;
@@ -55,78 +39,74 @@
   </style>
 </head>
 <body>
-  <h1>TOD TV Launcher</h1>
+  <h1>TOD Debug Launcher</h1>
 
-  <div class="hint">
-    جرّب الأزرار بالترتيب. إذا فتح TOD لكن زر الدخول لا يعمل، صوّر الصفحة التي يتوقف عندها.
-  </div>
-
-  <button onclick="go('https://www.tod.tv/')">1 - TOD Home</button>
-  <button onclick="go('https://www.tod.tv/ar')">2 - TOD Arabic</button>
-  <button onclick="go('https://www.tod.tv/en')">3 - TOD English</button>
-  <button onclick="go('https://www.tod.tv/ar/sign-in')">4 - TOD Arabic Sign In</button>
-  <button onclick="go('https://www.tod.tv/en/sign-in')">5 - TOD English Sign In</button>
-  <button onclick="replaceGo('https://www.tod.tv/ar')">6 - TOD Arabic Replace</button>
-  <button onclick="assignGo('https://www.tod.tv/ar')">7 - TOD Arabic Assign</button>
-  <button class="dark" onclick="showInfo()">8 - Show Browser Info</button>
+  <button onclick="openClean('https://www.tod.tv/')">1 - Open TOD Clean</button>
+  <button onclick="openClean('https://www.tod.tv/ar')">2 - Open TOD Arabic Clean</button>
+  <button onclick="openClean('https://www.tod.tv/en')">3 - Open TOD English Clean</button>
+  <button onclick="openPlain('https://www.tod.tv/ar')">4 - Open Without Cache Buster</button>
+  <button class="dark" onclick="showInfo()">5 - Browser Info</button>
 
   <div id="log" class="box">Ready</div>
 
   <script>
     var log = document.getElementById('log');
 
-    function setLog(text) {
-      log.innerHTML = text;
+    function openClean(url) {
+      var finalUrl = url;
+      var sep = finalUrl.indexOf('?') === -1 ? '?' : '&';
+      finalUrl = finalUrl + sep + 'tv=' + new Date().getTime();
+
+      log.innerHTML = 'Opening clean URL:\n' + finalUrl + '\n\nIf it keeps spinning, clear TV browser cookies/cache.';
+      setTimeout(function () {
+        window.location.href = finalUrl;
+      }, 600);
     }
 
-    function go(url) {
-      setLog('Opening:\n' + url);
-      window.location.href = url;
-    }
-
-    function replaceGo(url) {
-      setLog('Opening with location.replace:\n' + url);
-      window.location.replace(url);
-    }
-
-    function assignGo(url) {
-      setLog('Opening with location.assign:\n' + url);
-      window.location.assign(url);
+    function openPlain(url) {
+      log.innerHTML = 'Opening:\n' + url;
+      setTimeout(function () {
+        window.location.href = url;
+      }, 600);
     }
 
     function showInfo() {
       var out = '';
       out += 'User Agent:\n' + navigator.userAgent + '\n\n';
-      out += 'URL: ' + window.location.href + '\n';
       out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
+      out += 'LocalStorage: ';
+      try {
+        localStorage.setItem('x', '1');
+        localStorage.removeItem('x');
+        out += 'YES\n';
+      } catch(e) {
+        out += 'NO\n';
+      }
       out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
       out += 'EME: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
-      setLog(out);
+      log.innerHTML = out;
     }
 
     document.onkeydown = function(event) {
       event = event || window.event;
       var code = event.keyCode || event.which;
-      var items = document.querySelectorAll('button, a');
+      var items = document.querySelectorAll('button');
       var active = document.activeElement;
       var index = 0;
-      var i;
 
-      for (i = 0; i < items.length; i++) {
-        if (items[i] === active) {
-          index = i;
-        }
+      for (var i = 0; i < items.length; i++) {
+        if (items[i] === active) index = i;
       }
 
       if (code === 38 || code === 37) {
-        index = index - 1;
+        index--;
         if (index < 0) index = items.length - 1;
         items[index].focus();
         return false;
       }
 
       if (code === 40 || code === 39) {
-        index = index + 1;
+        index++;
         if (index >= items.length) index = 0;
         items[index].focus();
         return false;
@@ -141,8 +121,7 @@
     };
 
     window.onload = function() {
-      var first = document.querySelector('button');
-      if (first) first.focus();
+      document.querySelector('button').focus();
       showInfo();
     };
   </script>
