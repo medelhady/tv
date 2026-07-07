@@ -24,48 +24,23 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
-      - name: Install Android SDK packages
-        run: |
-          sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+      - name: Install SDK
+        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Install Gradle
         run: |
-          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
-          unzip gradle-8.7-bin.zip
-          echo "$PWD/gradle-8.7/bin" >> $GITHUB_PATH
-
-      - name: Show project files
-        run: |
-          find android-app -maxdepth 6 -type f | sort
+          wget -q https://services.gradle.org/distributions/gradle-8.6-bin.zip
+          unzip -q gradle-8.6-bin.zip
+          echo "$PWD/gradle-8.6/bin" >> $GITHUB_PATH
 
       - name: Build APK
         working-directory: android-app
-        run: |
-          set -o pipefail
-          gradle --stacktrace assembleDebug 2>&1 | tee ../build-log.txt
+        run: gradle assembleDebug --stacktrace
 
-      - name: Find and copy APK to site root
+      - name: Copy APK
         run: |
           find android-app -name "*.apk" -type f
-          APK_PATH=$(find android-app -name "*.apk" -type f | head -n 1)
-          if [ -z "$APK_PATH" ]; then
-            echo "No APK file was created"
-            exit 1
-          fi
-          cp "$APK_PATH" tod-tv-launcher.apk
-
-      - name: Upload build log
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-log
-          path: build-log.txt
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: tod-tv-launcher-apk
-          path: tod-tv-launcher.apk
+          cp android-app/app/build/outputs/apk/debug/app-debug.apk tod-tv-launcher.apk
 
       - name: Commit APK
         run: |
