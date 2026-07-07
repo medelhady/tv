@@ -3,20 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - TV Hub</title>
+    <title>Smart Rem TV - Premium Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background: #0d0f0e; color: #fff; width: 100vw; height: 100vh; overflow: hidden; padding: 3.5vw; display: flex; flex-direction: column; }
-        header { display: flex; justify-content: space-between; align-items: center; height: 12%; margin-bottom: 3vh; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px; }
-        .logo { font-size: 2rem; font-weight: 900; color: #00ff66; text-shadow: 0 0 15px rgba(0, 255, 102, 0.3); }
-        .time { font-size: 1.4rem; color: #888; }
-        .row-title { font-size: 1.3rem; margin-bottom: 1.5vh; color: #fff; font-weight: 700; }
-        .horizontal-grid { display: flex; gap: 2vw; overflow-x: auto; height: 33%; align-items: center; }
+        
+        body {
+            background: radial-gradient(circle at center, #111613 0%, #070908 100%);
+            color: #fff;
+            width: 100vw;
+            height: 100vh;
+            overflow-y: auto; /* السماح بالتمرير لأسفل إذا زادت الصفوف */
+            padding: 3vw;
+        }
+
+        /* إخفاء شريط التمرير الافتراضي */
+        body::-webkit-scrollbar { display: none; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 10vh;
+            margin-bottom: 4vh;
+            border-bottom: 1px solid rgba(0, 255, 102, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #00ff66;
+            text-shadow: 0 0 20px rgba(0, 255, 102, 0.4);
+        }
+
+        .time {
+            font-size: 1.4rem;
+            color: #a0a5a2;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 6px 18px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .category-section {
+            margin-bottom: 5vh;
+        }
+
+        .row-title {
+            font-size: 1.4rem;
+            margin-bottom: 2vh;
+            color: #fff;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .row-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 24px;
+            background: #00ff66;
+            border-radius: 3px;
+        }
+
+        /* شبكة أفقية متحركة لكل صف */
+        .horizontal-grid {
+            display: flex;
+            gap: 2vw;
+            overflow-x: auto;
+            padding: 10px 5px;
+            scroll-behavior: smooth;
+        }
+
         .horizontal-grid::-webkit-scrollbar { display: none; }
-        .card { flex: 0 0 21%; height: 95%; background: #1a1f1c; border-radius: 14px; border: 2px solid transparent; display: flex; flex-direction: column; justify-content: center; padding: 20px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); transition: transform 0.2s; }
-        .card:focus { border-color: #00ff66; transform: scale(1.05); background: #223c2b; outline: none; }
-        .card-title { font-size: 1.15rem; font-weight: 700; }
+
+        /* تصميم كارت القناة */
+        .card {
+            flex: 0 0 22%; /* يعرض حوالي 4 كروت ونصف في الشاشة */
+            height: 180px;
+            background: linear-gradient(135deg, rgba(30,35,32,0.7) 0%, rgba(15,18,16,0.9) 100%);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 22px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.25s;
+        }
+
+        /* تأثير الفوكس الاحترافي بالريموت */
+        .card:focus {
+            border-color: #00ff66;
+            transform: scale(1.06);
+            background: linear-gradient(135deg, #162e1f 0%, #09130d 100%);
+            box-shadow: 0 0 30px rgba(0, 255, 102, 0.25);
+            outline: none;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.4;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-meta {
+            font-size: 0.8rem;
+            color: #00ff66;
+            background: rgba(0, 255, 102, 0.08);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .badge-live {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff3b30;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -26,17 +142,82 @@
         <div class="time" id="clock">00:00</div>
     </header>
 
-    <div class="row-title">قنوات البث المباشر والاختبار</div>
-    <div class="horizontal-grid">
-        <div class="card" tabindex="1" data-id="NpEaa2P7qZI">
-            <div class="card-title">قناة الطبيعة العالمية</div>
+    <main>
+        
+        <div class="category-section">
+            <div class="row-title">البث المباشر والأخبار</div>
+            <div class="horizontal-grid">
+                
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
+                    <div class="card-title">قناة البث الإخباري المستمر</div>
+                    <div class="card-footer">
+                        <div class="card-meta badge-live">LIVE</div>
+                    </div>
+                </div>
+
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=Ir3Vb_709pM">
+                    <div class="card-title">قناة القرآن الكريم مباشر</div>
+                    <div class="card-footer">
+                        <div class="card-meta badge-live">LIVE</div>
+                    </div>
+                </div>
+
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=dQw4w9WgXcQ">
+                    <div class="card-title">قناة السنة النبوية بالمدينة</div>
+                    <div class="card-footer">
+                        <div class="card-meta badge-live">LIVE</div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-        <div class="card" tabindex="2" data-id="Ir3Vb_709pM">
-            <div class="card-title">إعلان سينمائي تجريبي</div>
+
+        <div class="category-section">
+            <div class="row-title">الوثائقيات وعالم الطبيعة</div>
+            <div class="horizontal-grid">
+                
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
+                    <div class="card-title">أسرار المحيطات العميقة</div>
+                    <div class="card-footer">
+                        <div class="card-meta">1080p</div>
+                    </div>
+                </div>
+
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=Ir3Vb_709pM">
+                    <div class="card-title">الحياة البرية في أفريقيا</div>
+                    <div class="card-footer">
+                        <div class="card-meta">4K Ultra</div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-    </div>
+
+        <div class="category-section">
+            <div class="row-title">ريم كيدز - محتوى العائلة والأطفال</div>
+            <div class="horizontal-grid">
+                
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=NpEaa2P7qZI">
+                    <div class="card-title">قصص وحكايات للأطفال</div>
+                    <div class="card-footer">
+                        <div class="card-meta">Rem Kids</div>
+                    </div>
+                </div>
+
+                <div class="card" tabindex="1" data-url="https://www.youtube.com/watch?v=Ir3Vb_709pM">
+                    <div class="card-title">أفلام كرتون تعليمية وتفاعلية</div>
+                    <div class="card-footer">
+                        <div class="card-meta">Rem Kids</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
 
     <script>
+        // 1. تحديث الساعة بشكل حي ومستمر
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = 
@@ -46,26 +227,42 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        document.querySelector('.card').focus();
+        // 2. تفعيل أول كارت تلقائياً عند فتح التطبيق لتسهيل التحكم بالريموت
+        setTimeout(() => {
+            const firstCard = document.querySelector('.card');
+            if(firstCard) firstCard.focus();
+        }, 200);
 
-        // دالة الانتقال الكامل لصفحة المشغل لتفريغ ذاكرة التلفزيون
-        function goToPlayer(videoId) {
-            window.location.href = `player.html?id=${videoId}`;
+        // 3. دالة توجيه المتصفح المباشر لتشغيل الفيديو الأصلي بدون شاشات سوداء
+        function launchNativeVideo(url) {
+            window.location.href = url;
         }
 
+        // 4. الاستماع لعمليات الضغط (الانتر أو النقر بالماوس اللاسلكي)
         document.querySelectorAll('.card').forEach(card => {
             card.addEventListener('click', function() {
-                const videoId = this.getAttribute('data-id');
-                if(videoId) goToPlayer(videoId);
+                const targetUrl = this.getAttribute('data-url');
+                if(targetUrl) launchNativeVideo(targetUrl);
             });
 
             card.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter' || e.keyCode === 13) {
-                    const videoId = this.getAttribute('data-id');
-                    if(videoId) goToPlayer(videoId);
+                    const targetUrl = this.getAttribute('data-url');
+                    if(targetUrl) launchNativeVideo(targetUrl);
                 }
+            });
+
+            // جعل الصف يتحرك أفقياً تلقائياً عندما يتحرك الفوكس بالريموت خارج حدود الشاشة
+            card.addEventListener('focus', function() {
+                this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             });
         });
     </script>
+    <div class="card" tabindex="1" data-url="رابط_الفيديو_هنا">
+    <div class="card-title">اسم القناة الجديدة</div>
+    <div class="card-footer">
+        <div class="card-meta">الدقة أو الملاحظة</div>
+    </div>
+</div>
 </body>
 </html>
