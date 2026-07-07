@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -16,8 +17,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
     private WebView web;
-    private String urlArabic = "https://www.tod.tv/ar";
-    private String urlEnglish = "https://www.tod.tv/en";
+    private final String todAr = "https://www.tod.tv/ar";
+    private final String todEn = "https://www.tod.tv/en";
+    private final String portal = "https://tv.vercel.app";
 
     public void onCreate(Bundle b) {
         super.onCreate(b);
@@ -30,54 +32,71 @@ public class MainActivity extends Activity {
         box.setPadding(28, 28, 28, 28);
         box.setBackgroundColor(0xff081018);
 
-        TextView title = new TextView(this);
-        title.setText("TOD TV Launcher");
-        title.setTextColor(0xffffffff);
-        title.setTextSize(30);
-        title.setPadding(0, 0, 0, 22);
+        TextView title = text("TOD TV Assistant", 30, 0xffffffff);
+        title.setPadding(0, 0, 0, 20);
         box.addView(title);
 
-        Button b1 = btn("Open TOD Arabic inside app");
-        b1.setOnClickListener(v -> openInside(urlArabic, false));
+        TextView note = text("If TOD keeps loading, this TV WebView is probably not compatible. Try external browser or install a better browser from the portal.", 17, 0xffcbd8e6);
+        note.setPadding(0, 0, 0, 18);
+        box.addView(note);
+
+        Button b1 = btn("1 - Open TOD in external browser");
+        b1.setOnClickListener(v -> openExternal(todAr));
         box.addView(b1);
 
-        Button b2 = btn("Open TOD English inside app");
-        b2.setOnClickListener(v -> openInside(urlEnglish, false));
+        Button b2 = btn("2 - Try TOD inside app");
+        b2.setOnClickListener(v -> openInside(todAr, false));
         box.addView(b2);
 
-        Button b3 = btn("Open TOD with Desktop UA");
-        b3.setOnClickListener(v -> openInside(urlArabic, true));
+        Button b3 = btn("3 - Try desktop mode");
+        b3.setOnClickListener(v -> openInside(todAr, true));
         box.addView(b3);
 
-        Button b4 = btn("Open TOD in external browser");
-        b4.setOnClickListener(v -> openExternal(urlArabic));
-        box.addView(b4);
-
-        Button b5 = btn("Clear cookies then open");
-        b5.setOnClickListener(v -> {
+        Button b4 = btn("4 - Clear cookies and retry");
+        b4.setOnClickListener(v -> {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
-            openInside(urlArabic, true);
+            openInside(todAr, true);
         });
+        box.addView(b4);
+
+        Button b5 = btn("5 - Open English TOD");
+        b5.setOnClickListener(v -> openExternal(todEn));
         box.addView(b5);
 
-        TextView note = new TextView(this);
-        note.setText("Use arrows and OK. If inside app keeps loading, try external browser.");
-        note.setTextColor(0xffcbd8e6);
-        note.setTextSize(18);
-        note.setPadding(0, 22, 0, 0);
-        box.addView(note);
+        Button b6 = btn("6 - Open download portal");
+        b6.setOnClickListener(v -> openExternal(portal));
+        box.addView(b6);
+
+        Button b7 = btn("7 - Open app settings");
+        b7.setOnClickListener(v -> {
+            Intent i = new Intent(Settings.ACTION_SETTINGS);
+            startActivity(i);
+        });
+        box.addView(b7);
+
+        TextView footer = text("Back returns to this menu. Use arrows and OK.", 16, 0xff93a4b5);
+        footer.setPadding(0, 18, 0, 0);
+        box.addView(footer);
 
         setContentView(box);
         b1.requestFocus();
     }
 
+    private TextView text(String value, int size, int color) {
+        TextView t = new TextView(this);
+        t.setText(value);
+        t.setTextSize(size);
+        t.setTextColor(color);
+        return t;
+    }
+
     private Button btn(String text) {
         Button b = new Button(this);
         b.setText(text);
-        b.setTextSize(22);
+        b.setTextSize(21);
         b.setAllCaps(false);
-        b.setPadding(12, 18, 12, 18);
+        b.setPadding(12, 16, 12, 16);
         return b;
     }
 
@@ -118,6 +137,7 @@ public class MainActivity extends Activity {
                 web.goBack();
                 return true;
             }
+            web = null;
             showMenu();
             return true;
         }
