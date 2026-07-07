@@ -3,79 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem TV</title>
+    <title>Smart Rem TV - Test</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-        body { background: radial-gradient(circle at center, #111613 0%, #070908 100%); color: #fff; width: 100vw; height: 100vh; overflow: hidden; padding: 3vw; }
+        body { background: radial-gradient(circle at center, #111613 0%, #070908 100%); color: #fff; width: 100vw; height: 100vh; padding: 3vw; }
         header { display: flex; justify-content: space-between; align-items: center; height: 10vh; margin-bottom: 4vh; border-bottom: 1px solid rgba(0, 255, 102, 0.1); padding-bottom: 10px; }
         .logo { font-size: 2.2rem; font-weight: 900; color: #00ff66; text-shadow: 0 0 20px rgba(0, 255, 102, 0.4); }
-        .time { font-size: 1.4rem; color: #a0a5a2; font-weight: 600; background: rgba(255, 255, 255, 0.03); padding: 6px 18px; border-radius: 25px; }
-        .category-section { margin-bottom: 5vh; }
-        .row-title { font-size: 1.4rem; margin-bottom: 2vh; color: #fff; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-        .row-title::before { content: ''; display: inline-block; width: 6px; height: 24px; background: #00ff66; border-radius: 3px; }
-        .horizontal-grid { display: flex; gap: 2vw; overflow-x: auto; padding: 10px 5px; }
-        
-        /* إجبار الكارت على التصرف كرابط حقيقي نافذ */
-        .card { 
-            flex: 0 0 25%; 
-            height: 180px; 
-            background: linear-gradient(135deg, rgba(30,35,32,0.8) 0%, rgba(15,18,16,0.9) 100%); 
-            border-radius: 16px; 
-            border: 1px solid rgba(255, 255, 255, 0.06); 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: space-between; 
-            padding: 22px; 
-            text-decoration: none; 
-            color: #fff;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-        }
-        
-        /* الفوكس بالريموت */
-        .card:focus { 
-            border-color: #00ff66; 
-            transform: scale(1.05); 
-            background: linear-gradient(135deg, #162e1f 0%, #09130d 100%); 
-            box-shadow: 0 0 30px rgba(0, 255, 102, 0.3); 
-            outline: none; 
-        }
-        .card-title { font-size: 1.2rem; font-weight: 700; line-height: 1.4; }
+        .row-title { font-size: 1.4rem; margin-bottom: 2vh; color: #fff; font-weight: 700; }
+        .horizontal-grid { display: flex; gap: 2vw; }
+        .card { flex: 0 0 25%; height: 180px; background: linear-gradient(135deg, rgba(30,35,32,0.8) 0%, rgba(15,18,16,0.9) 100%); border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.06); display: flex; flex-direction: column; justify-content: space-between; padding: 22px; text-decoration: none; color: #fff; }
+        .card:focus { border-color: #00ff66; transform: scale(1.05); background: linear-gradient(135deg, #162e1f 0%, #09130d 100%); outline: none; }
+        .card-title { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
         .card-meta { font-size: 0.8rem; color: #00ff66; background: rgba(0, 255, 102, 0.08); padding: 4px 10px; border-radius: 8px; width: fit-content; }
     </style>
 </head>
 <body>
     <header>
-        <div class="logo">🎛️ SMART REM TV</div>
-        <div class="time" id="clock">00:00</div>
+        <div class="logo">🎛️ SMART REM TV - DIAGNOSTIC</div>
     </header>
     <main>
         <div class="category-section">
-            <div class="row-title">منصات البث المباشر</div>
+            <div class="row-title">تجارب روابط TOD والبث</div>
             <div class="horizontal-grid">
                 
-                <!-- إضافة target="_blank" تفتح الرابط كصفحة جديدة وتمنع التعليق واللف -->
-                <a href="https://www.tod.tv/ar" class="card" tabindex="1" target="_blank">
-                    <div class="card-title">منصة TOD الرياضية (مباشر)</div>
-                    <div class="card-meta" style="color: #ff6600;">TOD TV 🚀</div>
+                <a href="https://www.tod.tv/ar/login" class="card" tabindex="1">
+                    <div class="card-title">TOD (رابط الدخول المباشر)</div>
+                    <div class="card-meta" style="color: #ff6600;">تجرية 1 🔓</div>
                 </a>
 
-                <a href="https://www.youtube.com/watch?v=NpEaa2P7qZI" class="card" tabindex="2" target="_blank">
-                    <div class="card-title">قناة البث التجريبي الأول</div>
-                    <div class="card-meta">YouTube</div>
+                <a href="https://tod.tv" class="card" tabindex="2">
+                    <div class="card-title">TOD (الرابط العالمي الأساسي)</div>
+                    <div class="card-meta" style="color: #ff6600;">تجربة 2 🌐</div>
+                </a>
+
+                <a href="https://www.youtube.com/watch?v=NpEaa2P7qZI" class="card" tabindex="3">
+                    <div class="card-title">بث يوتيوب (للتأكد من الرجوع)</div>
+                    <div class="card-meta">شغال 🟢</div>
                 </a>
 
             </div>
         </div>
     </main>
     <script>
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-        }
-        setInterval(updateClock, 1000); updateClock();
-        
-        // فوكس تلقائي للريموت
         setTimeout(() => { document.querySelector('.card').focus(); }, 300);
     </script>
 </body>
