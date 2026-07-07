@@ -1,154 +1,166 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Rem - TV Diagnostic Panel</title>
+    <title>Smart Rem - TV Hub</title>
     <style>
-        :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent-green: #22c55e;
-            --accent-red: #ef4444;
-        }
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+        /* ضبط الأبعاد الثابتة للشاشة الصينية 1280x720 */
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            background: var(--card-bg);
+
+        body {
+            background-color: #111;
+            color: #fff;
+            width: 1280px;
+            height: 720px;
+            overflow: hidden; /* منع التمرير العشوائي */
             padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            border: 2px solid #334155;
         }
-        h1 {
-            font-family: sans-serif;
-            margin-top: 0;
-            margin-bottom: 30px;
-            color: #ffffff;
-            border-bottom: 2px solid #334155;
-            padding-bottom: 15px;
-            font-size: 32px;
+
+        /* الهيدر العلوي */
+        header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
+            margin-bottom: 30px;
+            height: 50px;
         }
-        .grid {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .card {
-            background: rgba(15, 23, 42, 0.6);
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid var(--text-muted);
-        }
-        .card.success { border-left-color: var(--accent-green); }
-        .card.danger { border-left-color: var(--accent-red); }
-        
-        .label {
-            font-size: 18px;
-            color: var(--text-muted);
+
+        .logo {
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: 8px;
+            color: #00ff66; /* الهوية البصرية لـ ريم */
             text-transform: uppercase;
         }
-        .value {
-            font-size: 24px;
-            font-weight: bold;
-            word-break: break-all;
-            color: #ffffff;
+
+        .time {
+            font-size: 20px;
+            color: #aaa;
         }
-        .highlight {
-            color: #38bdf8;
+
+        /* القوائم الأفقية */
+        .row-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #eee;
+            font-weight: 600;
+        }
+
+        .horizontal-grid {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            scroll-behavior: smooth;
+        }
+
+        /* إخفاء شريط التمرير الافتراضي */
+        .horizontal-grid::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* كروت الأفلام والقنوات */
+        .card {
+            min-width: 220px;
+            max-width: 220px;
+            height: 130px;
+            background: #222;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        /* حالة التركيز (Focus) عند التنقل بالريموت */
+        .card:focus, .card.active {
+            border-color: #00ff66;
+            transform: scale(1.05);
+            background: #2a2a2a;
+            outline: none;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: #00ff66;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>🖥️ Smart Rem - TV Diagnostic Hub</h1>
-    
-    <div class="grid">
-        <div class="card" id="ua-card">
-            <div class="label">🌐 Current User-Agent (Identity)</div>
-            <div class="value highlight" id="ua">Detecting...</div>
-        </div>
+    <!-- الهيدر -->
+    <header>
+        <div class="logo">Smart Rem TV 📺</div>
+        <div class="time" id="clock">00:00</div>
+    </header>
 
-        <div class="card" id="res-card">
-            <div class="label">📺 Screen Hardware Resolution</div>
-            <div class="value" id="res">Detecting...</div>
+    <!-- القسم الأول: البث المباشر -->
+    <div class="row-title">البث المباشر (Live TV)</div>
+    <div class="horizontal-grid">
+        <div class="card" tabindex="1">
+            <div class="card-title">قناة beIN SPORTS 1</div>
+            <div class="card-meta">جودة HD | Widevine OK</div>
         </div>
-
-        <div class="card" id="view-card">
-            <div class="label">📐 Browser Viewport Size (Scaling)</div>
-            <div class="value" id="viewport">Detecting...</div>
+        <div class="card" tabindex="2">
+            <div class="card-title">قناة SSC 1</div>
+            <div class="card-meta">مباشر الآن</div>
         </div>
-
-        <div class="card" id="dpr-card">
-            <div class="label">🔍 Device Pixel Ratio (DPR)</div>
-            <div class="value" id="dpr">Detecting...</div>
+        <div class="card" tabindex="3">
+            <div class="card-title">قناة شاهد الأولى</div>
+            <div class="card-meta">منوعات</div>
         </div>
-
-        <div class="card" id="drm-card">
-            <div class="label">🛡️ Widevine DRM Support (TOD/Shahid)</div>
-            <div class="value" id="drm">Testing connection...</div>
+        <div class="card" tabindex="4">
+            <div class="card-title">قناة أبوظبي الرياضية</div>
+            <div class="card-meta">بث مباشر</div>
         </div>
     </div>
-</div>
 
-<script>
-    // 1. Fill Basic Browser Info
-    document.getElementById('ua').innerText = navigator.userAgent;
-    document.getElementById('res').innerText = `${screen.width} x ${screen.height}`;
-    document.getElementById('viewport').innerText = `${window.innerWidth} x ${window.innerHeight}`;
-    document.getElementById('dpr').innerText = window.devicePixelRatio;
+    <!-- القسم الثاني: الأفلام والمسلسلات -->
+    <div class="row-title">المضاف حديثاً (TOD & Shahid)</div>
+    <div class="horizontal-grid">
+        <div class="card" tabindex="5">
+            <div class="card-title">فيلم الإثارة والأكشن</div>
+            <div class="card-meta">شاهد حصرياً</div>
+        </div>
+        <div class="card" tabindex="6">
+            <div class="card-title">مسلسل دراما رمضان</div>
+            <div class="card-meta">الحلقة 5</div>
+        </div>
+        <div class="card" tabindex="7">
+            <div class="card-title">وثائقي المباريات</div>
+            <div class="card-meta">إنتاج TOD</div>
+        </div>
+    </div>
 
-    // 2. Comprehensive Widevine DRM Test
-    const drmCard = document.getElementById('drm-card');
-    const drmValue = document.getElementById('drm');
+    <script>
+        // تحديث الساعة التلقائي في الهيدر
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours().toString().padStart(2, '0');
+            let minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clock').innerText = hours + ':' + minutes;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
 
-    if (navigator.requestMediaKeySystemAccess) {
-        // Robust config to check for basic and standard Widevine capabilities
-        const config = [{
-            initDataTypes: ['cenc'],
-            videoCapabilities: [
-                { contentType: 'video/mp4; codecs="avc1.42E01E"' },
-                { contentType: 'video/mp4; codecs="hvc1.1.6.L93.B0"' } // Adds HEVC/4K check capability
-            ]
-        }];
-        
-        navigator.requestMediaKeySystemAccess('com.widevine.alpha', config)
-            .then(function(access) {
-                drmValue.innerText = "✅ SUPPORTED (L3 or L1 Integration Present)";
-                drmValue.style.color = "var(--accent-green)";
-                drmCard.classList.add('success');
-            })
-            .catch(function(err) {
-                drmValue.innerText = `❌ BLOCKED / NOT SUPPORTED (${err.message})`;
-                drmValue.style.color = "var(--accent-red)";
-                drmCard.classList.add('danger');
-            });
-    } else {
-        drmValue.innerText = "❌ MediaKeys API is missing in this WebView (Legacy Browser)";
-        drmValue.style.color = "var(--accent-red)";
-        drmCard.classList.add('danger');
-    }
-</script>
-
+        // تفعيل التنقل التلقائي لأول كارت عند فتح الصفحة
+        document.querySelector('.card').focus();
+    </script>
 </body>
 </html>
