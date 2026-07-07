@@ -37,7 +37,10 @@ jobs:
           set +e
           gradle assembleDebug --stacktrace > ../build-log.txt 2>&1
           CODE=$?
-          tail -n 120 ../build-log.txt
+          echo "===== IMPORTANT ERRORS ====="
+          grep -n -i -E "what went wrong|error:|failed|exception|caused by" ../build-log.txt | head -n 80
+          echo "===== LAST 160 LINES ====="
+          tail -n 160 ../build-log.txt
           exit $CODE
 
       - name: Copy APK
