@@ -24,6 +24,10 @@ jobs:
 
       - uses: android-actions/setup-android@v3
 
+      - name: Install Android SDK packages
+        run: |
+          sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
       - name: Install Gradle
         run: |
           wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
@@ -32,7 +36,15 @@ jobs:
 
       - name: Build APK
         working-directory: android-app
-        run: gradle --stacktrace assembleDebug
+        run: |
+          gradle --stacktrace --info assembleDebug 2>&1 | tee ../build-log.txt
+
+      - name: Upload build log if failed
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build-log.txt
 
       - name: Copy APK to site root
         run: cp android-app/app/build/outputs/apk/debug/app-debug.apk tod-tv-launcher.apk
