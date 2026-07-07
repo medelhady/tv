@@ -2,135 +2,106 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>TOD TV Compatibility</title>
+  <title>TOD TV Launcher</title>
   <style>
     body {
       margin: 0;
-      background: #101418;
+      background: #0f141a;
       color: white;
       font-family: Arial, sans-serif;
       font-size: 28px;
-      padding: 28px;
+      padding: 26px;
     }
     h1 {
-      font-size: 40px;
-      margin: 0 0 22px;
+      font-size: 42px;
+      margin: 0 0 20px;
+    }
+    .hint {
+      background: #202833;
+      padding: 20px;
+      margin-bottom: 20px;
+      font-size: 24px;
+      line-height: 1.4;
     }
     button, a {
       display: block;
       width: 100%;
       box-sizing: border-box;
-      margin: 18px 0;
+      margin: 16px 0;
       padding: 24px;
       background: #08a8f8;
       color: white;
-      border: 2px solid #ffffff;
+      border: 2px solid white;
       font-size: 30px;
       text-align: center;
       text-decoration: none;
     }
     button:focus, a:focus {
-      outline: 6px solid #ffcc00;
+      outline: 7px solid #ffcc00;
+      background: #16b6ff;
     }
-    .secondary {
-      background: #26313c;
+    .dark {
+      background: #273240;
     }
     .box {
-      margin-top: 22px;
-      padding: 22px;
+      margin-top: 20px;
+      padding: 20px;
       background: #202833;
-      color: white;
       white-space: pre-wrap;
       direction: ltr;
       text-align: left;
-      font-size: 24px;
+      font-size: 22px;
     }
   </style>
 </head>
 <body>
-  <h1>TOD TV Compatibility</h1>
+  <h1>TOD TV Launcher</h1>
 
-  <button onclick="runFullTest()">1 - Test Browser + DRM</button>
+  <div class="hint">
+    جرّب الأزرار بالترتيب. إذا فتح TOD لكن زر الدخول لا يعمل، صوّر الصفحة التي يتوقف عندها.
+  </div>
 
-  <a href="https://www.tod.tv/" target="_self">2 - Open TOD Same Page</a>
+  <button onclick="go('https://www.tod.tv/')">1 - TOD Home</button>
+  <button onclick="go('https://www.tod.tv/ar')">2 - TOD Arabic</button>
+  <button onclick="go('https://www.tod.tv/en')">3 - TOD English</button>
+  <button onclick="go('https://www.tod.tv/ar/sign-in')">4 - TOD Arabic Sign In</button>
+  <button onclick="go('https://www.tod.tv/en/sign-in')">5 - TOD English Sign In</button>
+  <button onclick="replaceGo('https://www.tod.tv/ar')">6 - TOD Arabic Replace</button>
+  <button onclick="assignGo('https://www.tod.tv/ar')">7 - TOD Arabic Assign</button>
+  <button class="dark" onclick="showInfo()">8 - Show Browser Info</button>
 
-  <button onclick="openTodReplace()">3 - Open TOD with location.replace</button>
-
-  <button class="secondary" onclick="openTodMobile()">4 - Open TOD Mobile Path</button>
-
-  <div id="result" class="box">Press test button</div>
+  <div id="log" class="box">Ready</div>
 
   <script>
-    var result = document.getElementById('result');
+    var log = document.getElementById('log');
 
-    function write(text) {
-      result.innerHTML = text;
+    function setLog(text) {
+      log.innerHTML = text;
     }
 
-    function add(line) {
-      result.innerHTML += line + '\n';
+    function go(url) {
+      setLog('Opening:\n' + url);
+      window.location.href = url;
     }
 
-    function openTodReplace() {
-      write('Opening TOD with location.replace...');
-      window.location.replace('https://www.tod.tv/');
+    function replaceGo(url) {
+      setLog('Opening with location.replace:\n' + url);
+      window.location.replace(url);
     }
 
-    function openTodMobile() {
-      write('Opening TOD mobile path...');
-      window.location.href = 'https://www.tod.tv/ar';
+    function assignGo(url) {
+      setLog('Opening with location.assign:\n' + url);
+      window.location.assign(url);
     }
 
-    function testStorage() {
-      try {
-        localStorage.setItem('tv_test', '1');
-        localStorage.removeItem('tv_test');
-        return 'YES';
-      } catch (e) {
-        return 'NO';
-      }
-    }
-
-    function runFullTest() {
-      write('');
-      add('User Agent:');
-      add(navigator.userAgent);
-      add('');
-      add('Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO'));
-      add('Local Storage: ' + testStorage());
-      add('Promise: ' + (window.Promise ? 'YES' : 'NO'));
-      add('Fetch: ' + (window.fetch ? 'YES' : 'NO'));
-      add('MediaSource: ' + (window.MediaSource ? 'YES' : 'NO'));
-      add('EME API: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO'));
-
-      if (!navigator.requestMediaKeySystemAccess) {
-        add('Widevine: NO - EME API missing');
-        return;
-      }
-
-      var config = [{
-        initDataTypes: ['cenc'],
-        audioCapabilities: [{
-          contentType: 'audio/mp4; codecs="mp4a.40.2"'
-        }],
-        videoCapabilities: [{
-          contentType: 'video/mp4; codecs="avc1.42E01E"'
-        }]
-      }];
-
-      navigator.requestMediaKeySystemAccess('com.widevine.alpha', config)
-        .then(function(access) {
-          add('Widevine: YES');
-          add('Key System: ' + access.keySystem);
-          add('');
-          add('Next: try opening TOD with buttons 2, 3, and 4.');
-        })
-        .catch(function(error) {
-          add('Widevine: NO or blocked');
-          add('Error: ' + error.name);
-          add('');
-          add('If Widevine is NO, TOD video will not play in this browser.');
-        });
+    function showInfo() {
+      var out = '';
+      out += 'User Agent:\n' + navigator.userAgent + '\n\n';
+      out += 'URL: ' + window.location.href + '\n';
+      out += 'Cookies: ' + (navigator.cookieEnabled ? 'YES' : 'NO') + '\n';
+      out += 'MediaSource: ' + (window.MediaSource ? 'YES' : 'NO') + '\n';
+      out += 'EME: ' + (navigator.requestMediaKeySystemAccess ? 'YES' : 'NO') + '\n';
+      setLog(out);
     }
 
     document.onkeydown = function(event) {
@@ -142,7 +113,9 @@
       var i;
 
       for (i = 0; i < items.length; i++) {
-        if (items[i] === active) index = i;
+        if (items[i] === active) {
+          index = i;
+        }
       }
 
       if (code === 38 || code === 37) {
@@ -168,8 +141,9 @@
     };
 
     window.onload = function() {
-      var first = document.querySelector('button, a');
+      var first = document.querySelector('button');
       if (first) first.focus();
+      showInfo();
     };
   </script>
 </body>
